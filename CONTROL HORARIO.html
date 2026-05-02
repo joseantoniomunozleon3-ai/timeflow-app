@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f3b4a">
+    <title>TimeFlow · Totales corregidos · Exactitud en minutos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%); font-family: 'Inter', system-ui, sans-serif; padding: 12px; min-height: 100vh; }
+        .app { max-width: 750px; margin: 0 auto; background: rgba(255,255,255,0.3); backdrop-filter: blur(12px); border-radius: 32px; padding: 16px; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.5); }
+        .empresa-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 60px; }
+        .empresa-selector select, .empresa-buttons button { background: #1a4d5f; border: none; border-radius: 40px; padding: 6px 12px; color: white; cursor: pointer; }
+        .tabs { display: flex; gap: 12px; margin-bottom: 20px; background: rgba(255,255,255,0.4); border-radius: 60px; padding: 4px; }
+        .tab-btn { flex: 1; background: transparent; border: none; padding: 10px 0; border-radius: 40px; font-weight: 600; font-size: 0.9rem; cursor: pointer; color: #1e4a5f; }
+        .tab-btn.active { background: #1e6f5c; color: white; }
+        .tab-pane { display: none; animation: fade 0.2s; }
+        .tab-pane.active { display: block; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .month-year { background: #1e6f5c; color: white; padding: 6px 18px; border-radius: 40px; font-weight: 700; font-size: 1.1rem; }
+        .nav-buttons button { background: #1a4d5f; border: none; font-size: 1.3rem; padding: 4px 12px; border-radius: 40px; color: white; margin: 0 3px; cursor: pointer; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 20px; }
+        .weekday { text-align: center; font-size: 0.7rem; font-weight: 600; background: rgba(255,255,255,0.6); padding: 5px; border-radius: 20px; }
+        .calendar-day { background: rgba(255,255,255,0.7); border-radius: 16px; padding: 8px 2px; text-align: center; cursor: pointer; transition: 0.1s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
+        .calendar-day:active { transform: scale(0.96); }
+        .day-number { font-size: 1rem; font-weight: 700; color: #133c47; }
+        .day-indicator { font-size: 0.6rem; margin-top: 2px; font-weight: 600; }
+        .has-data-ok { background: #00C853; border-left: 4px solid #009624; color: white; }
+        .has-data-ok .day-number { color: white; }
+        .has-data-bad { background: #E53935; border-left: 4px solid #B71C1C; color: white; }
+        .has-data-bad .day-number { color: white; }
+        .selected-day { background: #FFB74D; transform: scale(0.98); box-shadow: 0 0 0 2px white; }
+        .edit-panel { background: rgba(255,255,255,0.75); border-radius: 28px; padding: 16px; margin-top: 8px; }
+        .turno-block { background: rgba(0,0,0,0.05); border-radius: 24px; padding: 12px; margin-bottom: 16px; }
+        .turno-title { font-weight: 700; margin-bottom: 10px; color: #1e4a5f; font-size: 1rem; }
+        .edit-fields { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+        .field-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .field-group label { font-weight: 600; font-size: 0.7rem; color: #1e4a5f; }
+        input, button { border: none; border-radius: 28px; padding: 10px 12px; font-size: 0.9rem; }
+        .quick-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+        .btn-green { background: #2e7d32; color: white; }
+        .btn-red { background: #c62828; color: white; }
+        .btn-save { background: #1e6f5c; color: white; }
+        .btn-clear { background: #f39c12; color: white; }
+        .total-horas-dia { background: #1e4a5f20; border-radius: 28px; padding: 10px; text-align: center; font-weight: bold; margin-top: 12px; }
+        .estado-jornada { text-align: center; font-weight: 800; padding: 8px; border-radius: 40px; margin-top: 6px; }
+        .jornada-completa { background: #00C853; color: white; }
+        .jornada-incompleta { background: #E53935; color: white; }
+        .extra-details { display: none; background: #e0f2f1; padding: 8px; border-radius: 20px; margin-top: 12px; }
+        .extra-details.show { display: block; }
+        .toggle-btn { background: #3c6e71; color: white; width: 100%; margin-top: 10px; font-weight: 600; cursor: pointer; }
+        .stats-container, .report-container { background: rgba(255,255,255,0.6); border-radius: 28px; padding: 16px; }
+        .semana-fila { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #ccc; }
+        .semana-header { background: #1e6f5c; color: white; border-radius: 20px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: bold; }
+        .resumen-mes { margin-top: 15px; font-weight: bold; text-align: center; background: #e0f2f1; padding: 10px; border-radius: 28px; }
+        .report-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin: 15px 0; }
+        .report-btn { background: #2c3e50; color: white; padding: 8px 14px; border-radius: 40px; font-size: 0.8rem; cursor: pointer; border: none; }
+        .wa-btn { background: #25D366; }
+        .pdf-btn { background: #d32f2f; }
+        .preview-informe { background: white; border-radius: 20px; padding: 10px; max-height: 250px; overflow: auto; font-size: 0.75rem; }
+        footer { text-align: center; font-size: 0.7rem; margin-top: 16px; color: #2c5a7a; }
+        @media (max-width: 600px) { .edit-fields { flex-direction: column; } .calendar-day { padding: 5px 1px; } .day-number { font-size: 0.85rem; } }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="empresa-header">
+        <div class="empresa-selector"><span>🏢</span><select id="empresaSelect"></select></div>
+        <div class="empresa-buttons"><button id="nuevaEmpresaBtn">➕</button><button id="editarEmpresaBtn">✏️</button><button id="eliminarEmpresaBtn">🗑️</button></div>
+    </div>
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="calendar">📅 Día</button>
+        <button class="tab-btn" data-tab="stats">📊 Semana/Mes</button>
+        <button class="tab-btn" data-tab="reports">📄 Informes</button>
+    </div>
+    <!-- Pestaña Calendario -->
+    <div id="calendarTab" class="tab-pane active">
+        <div class="calendar-header">
+            <div class="month-year" id="monthYearDisplay"></div>
+            <div class="nav-buttons"><button id="prevMonthBtn">◀</button><button id="nextMonthBtn">▶</button></div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="edit-panel">
+            <div id="selectedDateTitle" style="font-weight:600; margin-bottom:8px;">📌 Selecciona un día</div>
+            <div class="turno-block">
+                <div class="turno-title">🌞 Turno de Mañana</div>
+                <div class="edit-fields">
+                    <div class="field-group"><label>⏰ Entrada</label><input type="time" id="mananaEntrada"></div>
+                    <div class="field-group"><label>🏁 Salida</label><input type="time" id="mananaSalida"></div>
+                    <div class="field-group"><label>⏸ Pausa (min)</label><input type="number" id="mananaPausa" min="0" step="5" value="0"></div>
+                </div>
+                <div class="quick-buttons">
+                    <button id="mananaEntradaAhora" class="btn-green">🟢 Entrada ahora</button>
+                    <button id="mananaSalidaAhora" class="btn-red">🔴 Salida ahora</button>
+                </div>
+            </div>
+            <div class="turno-block">
+                <div class="turno-title">🌙 Turno de Tarde</div>
+                <div class="edit-fields">
+                    <div class="field-group"><label>⏰ Entrada</label><input type="time" id="tardeEntrada"></div>
+                    <div class="field-group"><label>🏁 Salida</label><input type="time" id="tardeSalida"></div>
+                    <div class="field-group"><label>⏸ Pausa (min)</label><input type="number" id="tardePausa" min="0" step="5" value="0"></div>
+                </div>
+                <div class="quick-buttons">
+                    <button id="tardeEntradaAhora" class="btn-green">🟢 Entrada ahora</button>
+                    <button id="tardeSalidaAhora" class="btn-red">🔴 Salida ahora</button>
+                </div>
+            </div>
+            <div class="quick-buttons">
+                <button id="saveDayBtn" class="btn-save">💾 Guardar día completo</button>
+                <button id="clearDayBtn" class="btn-clear">🧹 Limpiar ambos turnos</button>
+            </div>
+            <div class="total-horas-dia" id="totalHorasDia">⏱️ Horas netas totales: --:-- h</div>
+            <div id="estadoJornada" class="estado-jornada"></div>
+            <div id="mensajeExtra" style="text-align:center; margin: 6px 0; font-weight:bold; font-size:0.9rem;"></div>
+            <div class="extra-details" id="extraDetails">
+                <div>💰 Importe total: <span id="importeDia">0.00</span> €</div>
+                <div>⏱️ Mínimo requerido: <span id="minimoMostrar">0</span> h</div>
+            </div>
+            <button id="toggleDetailsBtn" class="toggle-btn">💰 Mostrar detalles</button>
+        </div>
+    </div>
+    <!-- Pestaña Resúmenes (ahora con totales exactos) -->
+    <div id="statsTab" class="tab-pane">
+        <div class="stats-container">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+                <div class="field-group"><label>💰 Precio hora (€)</label><input type="number" id="globalHourlyRate" step="0.5" value="15"></div>
+                <div class="field-group"><label>⏱️ Mínimo h/día</label><input type="number" id="minDailyHours" step="0.5" value="7.5"></div>
+                <button id="updateConfigBtn" class="btn-save">Actualizar</button>
+            </div>
+            <div class="semana-header"><span>Semana</span><span>Horas netas (h:m)</span><span>Importe (€)</span></div>
+            <div id="weeklyRowsContainer" style="display:flex; flex-direction:column; gap:4px;"></div>
+            <div class="resumen-mes" id="monthSummaryShort"></div>
+        </div>
+    </div>
+    <!-- Pestaña Informes -->
+    <div id="reportsTab" class="tab-pane">
+        <div class="report-container">
+            <div class="report-buttons">
+                <button id="mesActualBtn" class="report-btn">📆 Mes actual</button>
+                <button id="mesAnteriorBtn" class="report-btn">◀ Mes anterior</button>
+                <button id="mesSiguienteBtn" class="report-btn">Mes siguiente ▶</button>
+            </div>
+            <div class="edit-fields" style="margin:10px 0">
+                <div class="field-group"><label>Desde</label><input type="date" id="reportDesde"></div>
+                <div class="field-group"><label>Hasta</label><input type="date" id="reportHasta"></div>
+                <button id="rangoLibreBtn" class="btn-save">Rango libre</button>
+            </div>
+            <div class="report-buttons">
+                <button id="pdfMensualBtn" class="report-btn pdf-btn">🖨️ PDF del mes actual</button>
+                <button id="compartirMensualBtn" class="report-btn wa-btn">📱 WhatsApp mes actual</button>
+            </div>
+            <div id="informeResultado" class="preview-informe">Aquí aparecerán los informes</div>
+        </div>
+    </div>
+    <footer>✅ Totales exactos · Sin datos = sin color · Si sumas 10h → ¡VAYA TELITA DE DÍA!</footer>
+</div>
+
+<script>
+    // ------------------------- MULTIEMPRESA Y DATOS -------------------------
+    let empresas = ["Mi trabajo"];
+    let empresaActiva = "Mi trabajo";
+    let datosEmpresas = {};
+    let workData = {};
+    let globalRate = 15;
+    let minHoursPerDay = 7.5;
+    let currentDate = new Date();
+    let selectedDateKey = null;
+
+    // DOM elements
+    const empresaSelect = document.getElementById('empresaSelect');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const monthYearDisplay = document.getElementById('monthYearDisplay');
+    const mananaEntrada = document.getElementById('mananaEntrada');
+    const mananaSalida = document.getElementById('mananaSalida');
+    const mananaPausa = document.getElementById('mananaPausa');
+    const tardeEntrada = document.getElementById('tardeEntrada');
+    const tardeSalida = document.getElementById('tardeSalida');
+    const tardePausa = document.getElementById('tardePausa');
+    const totalHorasSpan = document.getElementById('totalHorasDia');
+    const estadoJornadaDiv = document.getElementById('estadoJornada');
+    const mensajeExtraDiv = document.getElementById('mensajeExtra');
+    const importeSpan = document.getElementById('importeDia');
+    const minimoMostrarSpan = document.getElementById('minimoMostrar');
+    const extraDetails = document.getElementById('extraDetails');
+    const toggleBtn = document.getElementById('toggleDetailsBtn');
+    const globalRateInput = document.getElementById('globalHourlyRate');
+    const minHoursInput = document.getElementById('minDailyHours');
+    const weeklyRowsContainer = document.getElementById('weeklyRowsContainer');
+    const monthSummaryShort = document.getElementById('monthSummaryShort');
+    const reportDesde = document.getElementById('reportDesde');
+    const reportHasta = document.getElementById('reportHasta');
+    const informeDiv = document.getElementById('informeResultado');
+
+    function formatDateKey(d) { let y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+    function getTodayKey() { return formatDateKey(new Date()); }
+    function guardarTodo() { if(empresaActiva) datosEmpresas[empresaActiva] = { workData, globalRate, minHoursPerDay }; localStorage.setItem('timeflow_multi', JSON.stringify({ empresas, activa: empresaActiva, datos: datosEmpresas })); }
+    function cargarTodo() {
+        const saved = localStorage.getItem('timeflow_multi');
+        if(saved){ let obj = JSON.parse(saved); empresas = obj.empresas || ["Mi trabajo"]; empresaActiva = obj.activa || empresas[0]; datosEmpresas = obj.datos || {}; empresas.forEach(e => { if(!datosEmpresas[e]) datosEmpresas[e]={workData:{},globalRate:15,minHoursPerDay:7.5}; }); if(!datosEmpresas[empresaActiva]) datosEmpresas[empresaActiva]={workData:{},globalRate:15,minHoursPerDay:7.5}; }
+        else inicializarDefecto();
+        cargarEmpresaActiva();
+        actualizarSelector();
+    }
+    function inicializarDefecto(){ empresas=["Mi trabajo"]; empresaActiva="Mi trabajo"; datosEmpresas={"Mi trabajo":{workData:{},globalRate:15,minHoursPerDay:7.5}}; }
+    function cargarEmpresaActiva(){
+        let data = datosEmpresas[empresaActiva];
+        workData = data.workData || {}; globalRate = data.globalRate ?? 15; minHoursPerDay = data.minHoursPerDay ?? 7.5;
+        globalRateInput.value = globalRate; minHoursInput.value = minHoursPerDay; minimoMostrarSpan.innerText = minHoursPerDay;
+        if(!selectedDateKey) selectedDateKey = getTodayKey();
+        renderCalendar(); if(selectedDateKey) cargarDiaEnFormulario(selectedDateKey); actualizarResumenes();
+    }
+    function actualizarSelector(){ empresaSelect.innerHTML = ''; empresas.forEach(e=>{ let op = document.createElement('option'); op.value=e; op.text=e; if(e===empresaActiva) op.selected=true; empresaSelect.appendChild(op); }); }
+    function cambiarEmpresa(){ if(empresaActiva) datosEmpresas[empresaActiva] = { workData, globalRate, minHoursPerDay }; empresaActiva = empresaSelect.value; cargarEmpresaActiva(); guardarTodo(); }
+    function nuevaEmpresa(){ let nom=prompt("Nueva empresa:"); if(nom && !empresas.includes(nom)){ empresas.push(nom); datosEmpresas[nom]={workData:{},globalRate:15,minHoursPerDay:7.5}; empresaActiva=nom; guardarTodo(); actualizarSelector(); cargarEmpresaActiva(); } }
+    function editarEmpresa(){ let nuevo=prompt("Renombrar:", empresaActiva); if(nuevo && nuevo!==empresaActiva && !empresas.includes(nuevo)){ let idx=empresas.indexOf(empresaActiva); if(idx!==-1) empresas[idx]=nuevo; datosEmpresas[nuevo]=datosEmpresas[empresaActiva]; delete datosEmpresas[empresaActiva]; empresaActiva=nuevo; guardarTodo(); actualizarSelector(); cargarEmpresaActiva(); } }
+    function eliminarEmpresa(){ if(empresas.length===1){ alert("Al menos una empresa"); return; } if(confirm(`Eliminar ${empresaActiva}?`)){ let idx=empresas.indexOf(empresaActiva); if(idx!==-1) empresas.splice(idx,1); delete datosEmpresas[empresaActiva]; empresaActiva=empresas[0]; guardarTodo(); actualizarSelector(); cargarEmpresaActiva(); } }
+
+    // Función unificada para calcular minutos trabajados netos en un turno
+    function calcularMinutosTurno(entrada, salida, pausaMin){
+        if(!entrada || !salida) return 0;
+        let [eh, em] = entrada.split(':').map(Number);
+        let [xh, xm] = salida.split(':').map(Number);
+        let entradaM = eh*60+em;
+        let salidaM = xh*60+xm;
+        if(salidaM < entradaM) salidaM += 1440;
+        let trabajado = salidaM - entradaM - (pausaMin||0);
+        return trabajado > 0 ? trabajado : 0;
+    }
+
+    // Obtener total de minutos netos del día (mañana + tarde)
+    function getTotalMinutosDia(dateKey){
+        let dia = workData[dateKey] || {};
+        let man = dia.manana || {};
+        let tar = dia.tarde || {};
+        let minutosMan = calcularMinutosTurno(man.entrada, man.salida, man.pausa);
+        let minutosTar = calcularMinutosTurno(tar.entrada, tar.salida, tar.pausa);
+        let totalMinutos = minutosMan + minutosTar;
+        let tieneDatos = (man.entrada && man.salida) || (tar.entrada && tar.salida);
+        return { totalMinutos, tieneDatos };
+    }
+
+    // Para mostrar en la interfaz: horas y minutos a partir de minutos
+    function minutosAHorasYMinutos(minutos){
+        let horas = Math.floor(minutos / 60);
+        let mins = minutos % 60;
+        return { horas, mins };
+    }
+
+    // Para obtener horas decimales (usado en importe)
+    function minutosAHorasDecimal(minutos){
+        return minutos / 60;
+    }
+
+    // Obtener datos completos del día (para resúmenes)
+    function getDiaStats(dateKey){
+        let { totalMinutos, tieneDatos } = getTotalMinutosDia(dateKey);
+        let horasDecimal = totalMinutos / 60;
+        let importe = horasDecimal * globalRate;
+        return { totalMinutos, horasDecimal, importe, tieneDatos };
+    }
+
+    // Calcular total del mes (en minutos e importe)
+    function calcularTotalesMes(year, month){
+        let totalMinutos = 0;
+        let totalImporte = 0;
+        let daysInMonth = new Date(year, month+1, 0).getDate();
+        for(let d=1; d<=daysInMonth; d++){
+            let dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let stats = getDiaStats(dateKey);
+            totalMinutos += stats.totalMinutos;
+            totalImporte += stats.importe;
+        }
+        return { totalMinutos, totalImporte };
+    }
+
+    // Calendario (lunes primero)
+    function renderCalendar(){
+        let year = currentDate.getFullYear(), month = currentDate.getMonth();
+        let firstDayOfMonth = new Date(year, month, 1);
+        let startWeekday = firstDayOfMonth.getDay();
+        let offset = (startWeekday === 0) ? 6 : startWeekday - 1;
+        let daysInMonth = new Date(year, month+1, 0).getDate();
+        const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        monthYearDisplay.innerText = `${monthNames[month]} ${year}`;
+        const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+        let html = weekdays.map(d=>`<div class="weekday">${d}</div>`).join('');
+        for(let i=0; i<offset; i++) html += `<div class="calendar-day" style="opacity:0.3;"></div>`;
+        for(let d=1; d<=daysInMonth; d++){
+            let dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let { totalMinutos, tieneDatos } = getTotalMinutosDia(dateKey);
+            let statusClass = '';
+            if(tieneDatos){
+                let horasDecimal = totalMinutos / 60;
+                statusClass = (horasDecimal >= minHoursPerDay) ? 'has-data-ok' : 'has-data-bad';
+            }
+            let selected = (selectedDateKey === dateKey) ? 'selected-day' : '';
+            let indicador = tieneDatos ? (statusClass === 'has-data-ok' ? '✓' : '⚠️') : '';
+            html += `<div class="calendar-day ${statusClass} ${selected}" data-date="${dateKey}"><div class="day-number">${d}</div><div class="day-indicator">${indicador}</div></div>`;
+        }
+        calendarGrid.innerHTML = html;
+        document.querySelectorAll('.calendar-day[data-date]').forEach(el=>{
+            el.addEventListener('click',(e)=>{
+                let dk = el.getAttribute('data-date');
+                if(dk){ selectedDateKey = dk; renderCalendar(); cargarDiaEnFormulario(dk); }
+            });
+        });
+    }
+
+    function formatearFechaBonita(dateKey){
+        let [y,m,d] = dateKey.split('-');
+        let fecha = new Date(y, m-1, d);
+        let opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        let fechaStr = fecha.toLocaleDateString('es-ES', opciones);
+        fechaStr = fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
+        return `📌 Apuntando el día: ${fechaStr}`;
+    }
+
+    function cargarDiaEnFormulario(dateKey){
+        let dia = workData[dateKey] || {};
+        let man = dia.manana || {};
+        let tar = dia.tarde || {};
+        mananaEntrada.value = man.entrada || '';
+        mananaSalida.value = man.salida || '';
+        mananaPausa.value = man.pausa || 0;
+        tardeEntrada.value = tar.entrada || '';
+        tardeSalida.value = tar.salida || '';
+        tardePausa.value = tar.pausa || 0;
+        document.getElementById('selectedDateTitle').innerHTML = formatearFechaBonita(dateKey);
+        actualizarPreview(dateKey);
+    }
+
+    function actualizarPreview(dateKey){
+        let man = { entrada: mananaEntrada.value, salida: mananaSalida.value, pausa: parseInt(mananaPausa.value)||0 };
+        let tar = { entrada: tardeEntrada.value, salida: tardeSalida.value, pausa: parseInt(tardePausa.value)||0 };
+        let minutosMan = calcularMinutosTurno(man.entrada, man.salida, man.pausa);
+        let minutosTar = calcularMinutosTurno(tar.entrada, tar.salida, tar.pausa);
+        let totalMinutos = minutosMan + minutosTar;
+        let horasDecimal = totalMinutos / 60;
+        let importe = horasDecimal * globalRate;
+        let { horas, mins } = minutosAHorasYMinutos(totalMinutos);
+        totalHorasSpan.innerHTML = `⏱️ Horas netas totales: ${horas}h ${mins}m`;
+        importeSpan.innerText = importe.toFixed(2);
+        let cumple = horasDecimal >= minHoursPerDay;
+        estadoJornadaDiv.innerHTML = cumple ? '✅ JORNADA COMPLETA' : '❌ JORNADA INCOMPLETA';
+        estadoJornadaDiv.className = `estado-jornada ${cumple ? 'jornada-completa' : 'jornada-incompleta'}`;
+        if(horasDecimal >= 10){
+            mensajeExtraDiv.innerHTML = '🔥 ¡VAYA TELITA DE DÍA! 🔥';
+            mensajeExtraDiv.style.color = '#b71c1c';
+        } else { mensajeExtraDiv.innerHTML = ''; }
+    }
+
+    function guardarDia(){
+        if(!selectedDateKey) return;
+        let dia = workData[selectedDateKey] || {};
+        dia.manana = { entrada: mananaEntrada.value, salida: mananaSalida.value, pausa: parseInt(mananaPausa.value)||0 };
+        dia.tarde = { entrada: tardeEntrada.value, salida: tardeSalida.value, pausa: parseInt(tardePausa.value)||0 };
+        workData[selectedDateKey] = dia;
+        guardarTodo();
+        renderCalendar();
+        cargarDiaEnFormulario(selectedDateKey);
+        actualizarResumenes();
+    }
+
+    function limpiarTurnos(){
+        mananaEntrada.value = ''; mananaSalida.value = ''; mananaPausa.value = 0;
+        tardeEntrada.value = ''; tardeSalida.value = ''; tardePausa.value = 0;
+        if(selectedDateKey) actualizarPreview(selectedDateKey);
+    }
+    function ahora(selector){ let now=new Date(); document.getElementById(selector).value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`; if(selectedDateKey) actualizarPreview(selectedDateKey); }
+    document.getElementById('mananaEntradaAhora').onclick = () => ahora('mananaEntrada');
+    document.getElementById('mananaSalidaAhora').onclick = () => ahora('mananaSalida');
+    document.getElementById('tardeEntradaAhora').onclick = () => ahora('tardeEntrada');
+    document.getElementById('tardeSalidaAhora').onclick = () => ahora('tardeSalida');
+    document.getElementById('saveDayBtn').onclick = guardarDia;
+    document.getElementById('clearDayBtn').onclick = limpiarTurnos;
+    document.getElementById('toggleDetailsBtn').onclick = () => { extraDetails.classList.toggle('show'); toggleBtn.innerText = extraDetails.classList.contains('show') ? '💰 Ocultar detalles' : '💰 Mostrar detalles'; };
+    document.getElementById('updateConfigBtn').onclick = () => { globalRate = parseFloat(globalRateInput.value)||15; minHoursPerDay = parseFloat(minHoursInput.value)||0; minimoMostrarSpan.innerText = minHoursPerDay; guardarTodo(); renderCalendar(); if(selectedDateKey) actualizarPreview(selectedDateKey); actualizarResumenes(); };
+
+    // ------------------------- RESÚMENES (con minutos exactos) -------------------------
+    function getWeeksOfMonth(year, month){
+        let weeks = [];
+        let firstDay = new Date(year, month, 1);
+        let lastDay = new Date(year, month+1, 0);
+        let start = new Date(firstDay);
+        let startWeekday = start.getDay();
+        let offset = (startWeekday === 0) ? 6 : startWeekday - 1;
+        start.setDate(start.getDate() - offset);
+        let current = new Date(start);
+        let weekNum = 1;
+        while(current <= lastDay){
+            let days = [];
+            for(let i=0; i<7; i++){
+                let day = new Date(current);
+                if(day > lastDay) break;
+                days.push(formatDateKey(day));
+                current.setDate(current.getDate()+1);
+            }
+            weeks.push({ weekNumber: weekNum++, days });
+        }
+        return weeks;
+    }
+
+    function actualizarResumenes(){
+        let year = currentDate.getFullYear(), month = currentDate.getMonth();
+        let weeks = getWeeksOfMonth(year, month);
+        weeklyRowsContainer.innerHTML = '';
+        for(let w of weeks){
+            let totalMinutosSemana = 0;
+            let totalImporteSemana = 0;
+            for(let dk of w.days){
+                let stats = getDiaStats(dk);
+                totalMinutosSemana += stats.totalMinutos;
+                totalImporteSemana += stats.importe;
+            }
+            let { horas, mins } = minutosAHorasYMinutos(totalMinutosSemana);
+            let rowDiv = document.createElement('div');
+            rowDiv.className = 'semana-fila';
+            rowDiv.innerHTML = `<span>Semana ${w.weekNumber}</span><span>${horas}h ${mins}m</span><span>${totalImporteSemana.toFixed(2)} €</span>`;
+            weeklyRowsContainer.appendChild(rowDiv);
+        }
+        if(weeks.length === 0) weeklyRowsContainer.innerHTML = '<div class="semana-fila">Sin datos</div>';
+        let totals = calcularTotalesMes(year, month);
+        let { horas, mins } = minutosAHorasYMinutos(totals.totalMinutos);
+        monthSummaryShort.innerHTML = `📆 Total ${new Date(year,month).toLocaleString('es',{month:'long'})}: ${horas}h ${mins}m · ${totals.totalImporte.toFixed(2)} €`;
+    }
+
+    // ------------------------- INFORMES -------------------------
+    function obtenerDiasRango(desde, hasta){
+        let start = new Date(desde), end = new Date(hasta), res=[];
+        for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
+            let dk = formatDateKey(d);
+            let stats = getDiaStats(dk);
+            let dia = workData[dk] || {};
+            let man = dia.manana || {}, tar = dia.tarde || {};
+            let { horas, mins } = minutosAHorasYMinutos(stats.totalMinutos);
+            res.push({ fecha: dk, mananaEnt: man.entrada||'--', mananaSal: man.salida||'--', mananaPau: man.pausa||0, tardeEnt: tar.entrada||'--', tardeSal: tar.salida||'--', tardePau: tar.pausa||0, horasDecimal: stats.horasDecimal, importe: stats.importe, minutos: stats.totalMinutos, horasMostrar: `${horas}h ${mins}m` });
+        }
+        return res;
+    }
+    function generarTextoInforme(dias, titulo, totalMinutos, totalImporte){
+        let { horas, mins } = minutosAHorasYMinutos(totalMinutos);
+        let lineas = [`📊 ${titulo} - ${empresaActiva}\n`, `Período: ${dias[0]?.fecha} a ${dias[dias.length-1]?.fecha}\n`, `━━━━━━━━━━━━━━━━━━━━\n`];
+        for(let d of dias){
+            lineas.push(`${d.fecha}:`);
+            lineas.push(`  🌞 Mañana: ${d.mananaEnt} → ${d.mananaSal} (pausa ${d.mananaPau} min)`);
+            lineas.push(`  🌙 Tarde:  ${d.tardeEnt} → ${d.tardeSal} (pausa ${d.tardePau} min)`);
+            lineas.push(`  🔹 Neto día: ${d.horasMostrar}  💰 ${d.importe.toFixed(2)} €`);
+        }
+        lineas.push(`\n✅ TOTAL HORAS: ${horas}h ${mins}m`);
+        lineas.push(`💰 TOTAL IMPORTE: ${totalImporte.toFixed(2)} €`);
+        return lineas.join('\n');
+    }
+    function mostrarInforme(texto){ informeDiv.innerHTML = `<pre style="white-space:pre-wrap;">${texto}</pre>`; }
+    function informeMes(offset){
+        let fecha = new Date(currentDate.getFullYear(), currentDate.getMonth()+offset, 1);
+        let year = fecha.getFullYear(), month = fecha.getMonth();
+        let primero = `${year}-${String(month+1).padStart(2,'0')}-01`;
+        let ultimo = `${year}-${String(month+1).padStart(2,'0')}-${new Date(year, month+1, 0).getDate()}`;
+        let dias = obtenerDiasRango(primero, ultimo);
+        let totals = calcularTotalesMes(year, month);
+        mostrarInforme(generarTextoInforme(dias, `Informe ${new Date(year,month).toLocaleString('es',{month:'long'})} ${year}`, totals.totalMinutos, totals.totalImporte));
+    }
+    function rangoLibre(){
+        let desde = reportDesde.value, hasta = reportHasta.value;
+        if(!desde || !hasta){ alert("Selecciona fechas"); return; }
+        let dias = obtenerDiasRango(desde, hasta);
+        let totalMinutos = dias.reduce((a,b)=>a+b.minutos,0);
+        let totalImporte = dias.reduce((a,b)=>a+b.importe,0);
+        mostrarInforme(generarTextoInforme(dias, `Informe ${desde} → ${hasta}`, totalMinutos, totalImporte));
+    }
+    async function generarPDF(){
+        let year = currentDate.getFullYear(), month = currentDate.getMonth();
+        let primero = `${year}-${String(month+1).padStart(2,'0')}-01`;
+        let ultimo = `${year}-${String(month+1).padStart(2,'0')}-${new Date(year, month+1, 0).getDate()}`;
+        let dias = obtenerDiasRango(primero, ultimo);
+        let totals = calcularTotalesMes(year, month);
+        let { horas, mins } = minutosAHorasYMinutos(totals.totalMinutos);
+        let html = `<div style="font-family:Arial; padding:1rem;"><h2>${empresaActiva} - ${new Date(year,month).toLocaleString('es',{month:'long'})} ${year}</h2><p>Doble turno</p>
+        <table border="1" cellpadding="5" style="width:100%; border-collapse:collapse;"><tr><th>Fecha</th><th>Mañana E/S/P</th><th>Tarde E/S/P</th><th>Horas netas</th><th>Importe</th></tr>`;
+        for(let d of dias){
+            html += `<tr>
+                        <td>${d.fecha}</td>
+                        <td>${d.mananaEnt}→${d.mananaSal} (${d.mananaPau})</td>
+                        <td>${d.tardeEnt}→${d.tardeSal} (${d.tardePau})</td>
+                        <td>${d.horasMostrar}</td>
+                        <td>${d.importe.toFixed(2)} €</td>
+                     </tr>`;
+        }
+        html += `<tr style="font-weight:bold"><td colspan="3">TOTAL</td><td>${horas}h ${mins}m</td><td>${totals.totalImporte.toFixed(2)} €</td></tr>`;
+        html += `</table></div>`;
+        let div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div);
+        html2pdf().from(div).set({ margin:0.5, filename:`informe_${empresaActiva}_${primero}.pdf` }).save().then(()=>document.body.removeChild(div));
+    }
+    function compartirWhatsApp(){
+        let year = currentDate.getFullYear(), month = currentDate.getMonth();
+        let primero = `${year}-${String(month+1).padStart(2,'0')}-01`;
+        let ultimo = `${year}-${String(month+1).padStart(2,'0')}-${new Date(year, month+1, 0).getDate()}`;
+        let dias = obtenerDiasRango(primero, ultimo);
+        let totals = calcularTotalesMes(year, month);
+        let { horas, mins } = minutosAHorasYMinutos(totals.totalMinutos);
+        let texto = `📊 *RESUMEN MENSUAL* - ${empresaActiva}\n${primero} a ${ultimo}\n\n`;
+        for(let d of dias) if(d.minutos>0) texto += `📅 ${d.fecha}: ${d.horasMostrar} → ${d.importe.toFixed(2)} €\n`;
+        texto += `\n✅ TOTAL: ${horas}h ${mins}m\n💰 TOTAL IMPORTE: ${totals.totalImporte.toFixed(2)} €`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+    }
+
+    // Eventos de navegación y pestañas
+    document.getElementById('prevMonthBtn').onclick = () => { currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); actualizarResumenes(); if(selectedDateKey) cargarDiaEnFormulario(selectedDateKey); };
+    document.getElementById('nextMonthBtn').onclick = () => { currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); actualizarResumenes(); if(selectedDateKey) cargarDiaEnFormulario(selectedDateKey); };
+    document.getElementById('mesActualBtn').onclick = () => informeMes(0);
+    document.getElementById('mesAnteriorBtn').onclick = () => informeMes(-1);
+    document.getElementById('mesSiguienteBtn').onclick = () => informeMes(1);
+    document.getElementById('rangoLibreBtn').onclick = rangoLibre;
+    document.getElementById('pdfMensualBtn').onclick = generarPDF;
+    document.getElementById('compartirMensualBtn').onclick = compartirWhatsApp;
+    empresaSelect.onchange = cambiarEmpresa;
+    document.getElementById('nuevaEmpresaBtn').onclick = nuevaEmpresa;
+    document.getElementById('editarEmpresaBtn').onclick = editarEmpresa;
+    document.getElementById('eliminarEmpresaBtn').onclick = eliminarEmpresa;
+
+    const camposInput = ['mananaEntrada','mananaSalida','mananaPausa','tardeEntrada','tardeSalida','tardePausa'];
+    camposInput.forEach(id => document.getElementById(id).addEventListener('input', () => { if(selectedDateKey) actualizarPreview(selectedDateKey); }));
+
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            let tab = btn.dataset.tab;
+            document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            if(tab === 'stats') actualizarResumenes();
+            else if(tab === 'calendar') renderCalendar();
+        });
+    });
+
+    cargarTodo();
+    if(!selectedDateKey) selectedDateKey = getTodayKey();
+    cargarDiaEnFormulario(selectedDateKey);
+</script>
+</body>
+</html>
