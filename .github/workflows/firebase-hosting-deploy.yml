@@ -1,4 +1,4 @@
-name: Deploy TimeFlow → Firebase Hosting
+name: Deploy TimeFlow → .github/workflows/firebase-hosting-deploy.yml
 
 on:
   push:
