@@ -193,15 +193,73 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .mte{font-size:1.2rem;font-weight:700;color:rgba(255,255,255,.9)}
 
 /* REPORTS */
-.report-btns{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
-.rbtn{font-size:.75rem;font-weight:700;padding:9px 14px;border-radius:var(--r);border:2px solid var(--border);background:var(--surface);color:var(--mid);cursor:pointer;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.rbtn:active{border-color:#1e3a5f;color:#1e3a5f;background:rgba(30,58,95,.1)}
-.rbtn.wa{border-color:rgba(16,185,129,.35);color:var(--green);background:var(--greeng)}
-.rbtn.pdf{border-color:var(--redb);color:var(--red);background:var(--redg)}
-.range-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:10px}
-.range-row input[type=date]{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:.82rem;font-weight:500;padding:9px 10px;outline:none;width:100%;-webkit-appearance:none}
-.range-row input[type=date]:focus{border-color:#1e3a5f;box-shadow:0 0 0 3px rgba(30,58,95,.13)}
-.preview{background:var(--surface);border:2px solid var(--border);border-radius:var(--rl);padding:14px;max-height:280px;overflow:auto;font-family:'Courier New',monospace;font-size:.73rem;color:var(--text);line-height:1.8;white-space:pre-wrap;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.rpt-period-nav{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.rpt-period-nav button{flex:1;font-family:var(--sans);font-size:.75rem;font-weight:700;padding:10px 6px;border-radius:var(--r);border:2px solid var(--border);background:var(--surface);color:var(--mid);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px}
+.rpt-period-nav button:active{border-color:#1e3a5f;color:#1e3a5f;background:var(--indigog)}
+.rpt-period-nav button.cur{background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(30,58,95,.3)}
+.rpt-range{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-bottom:12px}
+.rpt-range input[type=date]{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:.82rem;font-weight:500;padding:9px 10px;outline:none;width:100%;-webkit-appearance:none}
+.rpt-range input[type=date]:focus{border-color:#1e3a5f;box-shadow:0 0 0 3px rgba(30,58,95,.13)}
+.rpt-range button{font-family:var(--sans);font-size:.75rem;font-weight:700;padding:9px 12px;border-radius:var(--r);border:2px solid var(--border);background:var(--surface);color:var(--mid);cursor:pointer;white-space:nowrap}
+.rpt-range button:active{border-color:#1e3a5f;color:#1e3a5f}
+
+/* Hero resumen */
+.rpt-hero{background:linear-gradient(135deg,#1e3a5f 0%,#2e5f8a 100%);border-radius:var(--rl);padding:20px 18px 16px;margin-bottom:12px;box-shadow:0 6px 24px rgba(30,58,95,.3);display:none}
+.rpt-hero.show{display:block}
+.rpt-hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.rpt-hero-period{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.rpt-hero-title{font-size:1.25rem;font-weight:800;color:#fff}
+.rpt-hero-badge{background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:6px 12px;text-align:right}
+.rpt-hero-badge-lbl{font-size:.6rem;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.rpt-hero-badge-val{font-size:1.1rem;font-weight:800;color:#fff}
+.rpt-hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.rpt-stat{background:rgba(255,255,255,.12);border-radius:10px;padding:10px 10px 8px}
+.rpt-stat-lbl{font-size:.58rem;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.rpt-stat-val{font-size:1rem;font-weight:800;color:#fff}
+.rpt-stat-sub{font-size:.65rem;color:rgba(255,255,255,.5);font-weight:500}
+/* Mini barras semanales */
+.rpt-bars{display:flex;gap:4px;align-items:flex-end;height:44px}
+.rpt-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.rpt-bar-bg{flex:1;width:100%;background:rgba(255,255,255,.12);border-radius:4px;position:relative;min-height:44px}
+.rpt-bar-fill{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.7);border-radius:4px;transition:height .4s cubic-bezier(.34,1.56,.64,1)}
+.rpt-bar-lbl{font-size:.55rem;color:rgba(255,255,255,.5);font-weight:700}
+
+/* Cards de días */
+.rpt-days{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.rpt-day-card{background:var(--surface);border-radius:14px;border:2px solid var(--border);overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.rpt-day-card.ok{border-color:var(--greenb)}
+.rpt-day-card.bad{border-color:var(--redb)}
+.rpt-day-head{display:flex;align-items:center;padding:10px 14px;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.rpt-day-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.rpt-day-card.ok .rpt-day-dot{background:var(--green)}
+.rpt-day-card.bad .rpt-day-dot{background:var(--red)}
+.rpt-day-card:not(.ok):not(.bad) .rpt-day-dot{background:var(--dim)}
+.rpt-day-fecha{font-size:.82rem;font-weight:700;color:var(--text);flex:1;text-transform:capitalize}
+.rpt-day-h{font-size:.88rem;font-weight:800;color:#1e3a5f}
+.rpt-day-eur{font-size:.78rem;font-weight:700;color:var(--mid);margin-left:6px}
+.rpt-day-chevron{font-size:.7rem;color:var(--dim);transition:transform .2s}
+.rpt-day-card.open .rpt-day-chevron{transform:rotate(180deg)}
+.rpt-day-body{display:none;border-top:1.5px solid var(--border);padding:10px 14px;background:#f8f9fc}
+.rpt-day-card.open .rpt-day-body{display:block}
+.rpt-turno-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.78rem}
+.rpt-turno-row:last-child{margin-bottom:0}
+.rpt-turno-ico{font-size:.95rem;flex-shrink:0}
+.rpt-turno-times{color:var(--text);font-weight:600;flex:1}
+.rpt-turno-pausa{color:var(--dim);font-size:.7rem}
+/* Barra de horas del día */
+.rpt-day-bar{height:5px;background:var(--indigog);border-radius:3px;overflow:hidden;margin-top:8px}
+.rpt-day-bar-fill{height:100%;background:linear-gradient(90deg,#1e3a5f,#2e5f8a);border-radius:3px;transition:width .5s}
+.rpt-day-card.bad .rpt-day-bar-fill{background:linear-gradient(90deg,var(--red),#fb923c)}
+.rpt-day-card.ok .rpt-day-bar-fill{background:linear-gradient(90deg,var(--green),#06b6d4)}
+
+/* Acciones PDF/WA */
+.rpt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.rpt-act-btn{font-family:var(--sans);font-size:.8rem;font-weight:700;padding:13px;border-radius:var(--r);border:none;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.rpt-act-btn.pdf{background:var(--redg);border:2px solid var(--redb);color:var(--red)}
+.rpt-act-btn.pdf:active{background:var(--red);color:#fff}
+.rpt-act-btn.wa{background:var(--greeng);border:2px solid var(--greenb);color:var(--green)}
+.rpt-act-btn.wa:active{background:var(--green);color:#fff}
+.rpt-empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:.85rem;font-weight:500}
 
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -339,21 +397,65 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 
   <!-- PANE REPORTS -->
   <div class="pane" id="reportsPane">
-    <div class="report-btns">
-      <button class="rbtn" id="mesActualBtn">📆 Mes actual</button>
-      <button class="rbtn" id="mesAnteriorBtn">◀ Anterior</button>
-      <button class="rbtn" id="mesSiguienteBtn">Siguiente ▶</button>
+
+    <!-- Navegación de período -->
+    <div class="rpt-period-nav">
+      <button id="mesAnteriorBtn">◀ Anterior</button>
+      <button class="cur" id="mesActualBtn">📅 Mes actual</button>
+      <button id="mesSiguienteBtn">Siguiente ▶</button>
     </div>
-    <div class="range-row">
-      <input type="date" id="reportDesde">
-      <input type="date" id="reportHasta">
-      <button class="rbtn" id="rangoLibreBtn">Rango</button>
+
+    <!-- Rango libre -->
+    <div class="rpt-range">
+      <input type="date" id="reportDesde" placeholder="Desde">
+      <input type="date" id="reportHasta" placeholder="Hasta">
+      <button id="rangoLibreBtn">Rango</button>
     </div>
-    <div class="report-btns">
-      <button class="rbtn pdf" id="pdfMensualBtn">🖨 PDF mes</button>
-      <button class="rbtn wa" id="compartirMensualBtn">📱 WhatsApp</button>
+
+    <!-- Hero resumen -->
+    <div class="rpt-hero" id="rptHero">
+      <div class="rpt-hero-top">
+        <div>
+          <div class="rpt-hero-period" id="rptHeroPeriod">PERÍODO</div>
+          <div class="rpt-hero-title" id="rptHeroTitle">—</div>
+        </div>
+        <div class="rpt-hero-badge">
+          <div class="rpt-hero-badge-lbl">Importe</div>
+          <div class="rpt-hero-badge-val" id="rptHeroEur">— €</div>
+        </div>
+      </div>
+      <div class="rpt-hero-stats">
+        <div class="rpt-stat">
+          <div class="rpt-stat-lbl">Horas</div>
+          <div class="rpt-stat-val" id="rptHeroH">—</div>
+          <div class="rpt-stat-sub">netas</div>
+        </div>
+        <div class="rpt-stat">
+          <div class="rpt-stat-lbl">Días</div>
+          <div class="rpt-stat-val" id="rptHeroDias">—</div>
+          <div class="rpt-stat-sub">trabajados</div>
+        </div>
+        <div class="rpt-stat">
+          <div class="rpt-stat-lbl">Media</div>
+          <div class="rpt-stat-val" id="rptHeroMedia">—</div>
+          <div class="rpt-stat-sub">h/día</div>
+        </div>
+      </div>
+      <!-- Barras semanales -->
+      <div class="rpt-bars" id="rptBars"></div>
     </div>
-    <div class="preview" id="informeResultado">Selecciona un período para generar el informe…</div>
+
+    <!-- Acciones -->
+    <div class="rpt-actions" id="rptActions" style="display:none">
+      <button class="rpt-act-btn pdf" id="pdfMensualBtn">🖨 PDF mes</button>
+      <button class="rpt-act-btn wa" id="compartirMensualBtn">📱 WhatsApp</button>
+    </div>
+
+    <!-- Cards de días -->
+    <div class="rpt-days" id="rptDays">
+      <div class="rpt-empty">Selecciona un período para ver el informe</div>
+    </div>
+
   </div>
 
 </div>
@@ -597,20 +699,77 @@ function diasRango(desde,hasta){
   return res;
 }
 
-function textoInforme(dias,titulo,tMin,tImp){
+const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const WD=['dom','lun','mar','mié','jue','vie','sáb'];
+
+function renderInforme(dias,titulo,periodo,tMin,tImp){
+  // Hero
+  const hero=$('rptHero');hero.classList.add('show');
+  const diasTrabajados=dias.filter(d=>d.min>0).length;
   const{h,m}=m2hm(tMin);
-  const ln=[`📊 ${titulo}`,`Empresa: ${empresaActiva}`,`${dias[0]?.fecha} → ${dias[dias.length-1]?.fecha}`,'─'.repeat(38)];
-  for(const d of dias){
-    if(d.min>0||d.mE!=='--'||d.tE!=='--'){
-      ln.push(`\n${d.fecha}`);
-      ln.push(`  🌞 ${d.mE} → ${d.mS}  (pausa ${d.mP} min)`);
-      ln.push(`  🌙 ${d.tE} → ${d.tS}  (pausa ${d.tP} min)`);
-      ln.push(`  ▸ ${d.hstr}  ·  ${d.imp.toFixed(2)} €`);
-    }
-  }
-  ln.push('\n'+'─'.repeat(38));
-  ln.push(`TOTAL  ${h}h ${String(m).padStart(2,'0')}m  ·  ${tImp.toFixed(2)} €`);
-  return ln.join('\n');
+  $('rptHeroPeriod').textContent=periodo;
+  $('rptHeroTitle').textContent=titulo;
+  $('rptHeroEur').textContent=tImp.toFixed(2)+' €';
+  $('rptHeroH').textContent=`${h}h ${String(m).padStart(2,'0')}m`;
+  $('rptHeroDias').textContent=diasTrabajados;
+  const media=diasTrabajados>0?tMin/diasTrabajados/60:0;
+  $('rptHeroMedia').textContent=media>0?media.toFixed(1):'—';
+  // Barras semanales (máx 6 semanas)
+  const semanas=[];let semActual=[];let maxSemH=0;
+  dias.forEach((d,i)=>{
+    semActual.push(d);
+    const dow=new Date(d.fecha).getDay();
+    if(dow===0||i===dias.length-1){semanas.push(semActual);semActual=[]}
+  });
+  semanas.forEach(s=>{const t=s.reduce((a,b)=>a+b.min,0);if(t>maxSemH)maxSemH=t});
+  const barsEl=$('rptBars');barsEl.innerHTML='';
+  semanas.forEach((s,i)=>{
+    const t=s.reduce((a,b)=>a+b.min,0);
+    const pct=maxSemH>0?Math.round(t/maxSemH*100):0;
+    const wrap=document.createElement('div');wrap.className='rpt-bar-wrap';
+    wrap.innerHTML=`<div class="rpt-bar-bg"><div class="rpt-bar-fill" style="height:${pct}%"></div></div><div class="rpt-bar-lbl">S${i+1}</div>`;
+    barsEl.appendChild(wrap);
+  });
+  // Acciones
+  $('rptActions').style.display='grid';
+  // Cards de días
+  const cont=$('rptDays');cont.innerHTML='';
+  const diasConDatos=dias.filter(d=>d.min>0||d.mE!=='--'||d.tE!=='--');
+  if(diasConDatos.length===0){cont.innerHTML='<div class="rpt-empty">Sin registros en este período</div>';return}
+  const maxMin=Math.max(...diasConDatos.map(d=>d.min),1);
+  diasConDatos.forEach(d=>{
+    const[y,mo2,day]=d.fecha.split('-');
+    const dateObj=new Date(y,mo2-1,day);
+    const nomDia=WD[dateObj.getDay()];
+    const fechaLabel=`${nomDia} ${day} ${MN[parseInt(mo2)-1].substring(0,3).toLowerCase()}`;
+    const jornada=d.min/60;
+    const cls=d.min===0?'':(jornada>=minHoursPerDay?'ok':'bad');
+    const pct=Math.round(d.min/maxMin*100);
+    const card=document.createElement('div');card.className=`rpt-day-card ${cls}`;
+    card.innerHTML=`
+      <div class="rpt-day-head">
+        <div class="rpt-day-dot"></div>
+        <div class="rpt-day-fecha">${fechaLabel}</div>
+        <span class="rpt-day-h">${d.hstr}</span>
+        <span class="rpt-day-eur">${d.imp.toFixed(2)} €</span>
+        <span class="rpt-day-chevron">▾</span>
+      </div>
+      <div class="rpt-day-body">
+        <div class="rpt-turno-row">
+          <span class="rpt-turno-ico">🌅</span>
+          <span class="rpt-turno-times">${d.mE} → ${d.mS}</span>
+          <span class="rpt-turno-pausa">${d.mP>0?`pausa ${d.mP}m`:''}</span>
+        </div>
+        <div class="rpt-turno-row">
+          <span class="rpt-turno-ico">🌃</span>
+          <span class="rpt-turno-times">${d.tE} → ${d.tS}</span>
+          <span class="rpt-turno-pausa">${d.tP>0?`pausa ${d.tP}m`:''}</span>
+        </div>
+        <div class="rpt-day-bar"><div class="rpt-day-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    card.querySelector('.rpt-day-head').addEventListener('click',()=>card.classList.toggle('open'));
+    cont.appendChild(card);
+  });
 }
 
 function informeMes(offset){
@@ -618,24 +777,39 @@ function informeMes(offset){
   const yr=f.getFullYear(),mo=f.getMonth();
   const p=`${yr}-${String(mo+1).padStart(2,'0')}-01`,u=`${yr}-${String(mo+1).padStart(2,'0')}-${new Date(yr,mo+1,0).getDate()}`;
   const dias=diasRango(p,u),tot=getMesStats(yr,mo);
-  const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  $('informeResultado').textContent=textoInforme(dias,`Informe ${MN[mo]} ${yr}`,tot.total,tot.imp);
+  renderInforme(dias,`${MN[mo]} ${yr}`,`${p.split('-').reverse().join('/')} → ${u.split('-').reverse().join('/')}`,tot.total,tot.imp);
 }
 
 function rangoLibre(){
   const d=$('reportDesde').value,h=$('reportHasta').value;
-  if(!d||!h){alert('Selecciona las dos fechas');return}
+  if(!d||!h){tfAlert({icon:'📅',title:'Selecciona fechas',sub:'Elige las fechas de inicio y fin del rango.'});return}
   const dias=diasRango(d,h),tM=dias.reduce((a,b)=>a+b.min,0),tI=dias.reduce((a,b)=>a+b.imp,0);
-  $('informeResultado').textContent=textoInforme(dias,`Informe ${d} → ${h}`,tM,tI);
+  const fmt=s=>s.split('-').reverse().join('/');
+  renderInforme(dias,`${fmt(d)} – ${fmt(h)}`,`Rango personalizado`,tM,tI);
+}
+
+function textoInforme(dias,tMin,tImp){
+  const{h,m}=m2hm(tMin);
+  const ln=[];
+  for(const d of dias){
+    if(d.min>0||d.mE!=='--'||d.tE!=='--'){
+      ln.push(`${d.fecha}`);
+      ln.push(`  🌅 ${d.mE} → ${d.mS}  (pausa ${d.mP} min)`);
+      ln.push(`  🌃 ${d.tE} → ${d.tS}  (pausa ${d.tP} min)`);
+      ln.push(`  ▸ ${d.hstr}  ·  ${d.imp.toFixed(2)} €\n`);
+    }
+  }
+  ln.push(`─────────────────────────────────────`);
+  ln.push(`TOTAL  ${h}h ${String(m).padStart(2,'0')}m  ·  ${tImp.toFixed(2)} €`);
+  return ln.join('\n');
 }
 
 async function generarPDF(){
   const yr=currentDate.getFullYear(),mo=currentDate.getMonth();
   const p=`${yr}-${String(mo+1).padStart(2,'0')}-01`,u=`${yr}-${String(mo+1).padStart(2,'0')}-${new Date(yr,mo+1,0).getDate()}`;
   const dias=diasRango(p,u),tot=getMesStats(yr,mo);const{h,m}=m2hm(tot.total);
-  const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  let html=`<div style="font-family:Arial;padding:1rem"><h2 style="color:#6366f1">${empresaActiva} — ${MN[mo]} ${yr}</h2><table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:12px"><tr style="background:#6366f1;color:white"><th>Fecha</th><th>Mañana</th><th>Tarde</th><th>Horas</th><th>€</th></tr>`;
-  for(const d of dias)html+=`<tr><td>${d.fecha}</td><td>${d.mE}→${d.mS} (${d.mP}m)</td><td>${d.tE}→${d.tS} (${d.tP}m)</td><td>${d.hstr}</td><td>${d.imp.toFixed(2)}</td></tr>`;
+  let html=`<div style="font-family:Arial;padding:1rem"><h2 style="color:#1e3a5f">${empresaActiva} — ${MN[mo]} ${yr}</h2><table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:12px"><tr style="background:#1e3a5f;color:white"><th>Fecha</th><th>Mañana</th><th>Tarde</th><th>Horas</th><th>€</th></tr>`;
+  for(const d of dias.filter(x=>x.min>0||x.mE!=='--'||x.tE!=='--'))html+=`<tr><td>${d.fecha}</td><td>${d.mE}→${d.mS} (${d.mP}m)</td><td>${d.tE}→${d.tS} (${d.tP}m)</td><td>${d.hstr}</td><td>${d.imp.toFixed(2)}</td></tr>`;
   html+=`<tr style="font-weight:bold;background:#eef0f8"><td colspan="3">TOTAL</td><td>${h}h ${String(m).padStart(2,'0')}m</td><td>${tot.imp.toFixed(2)} €</td></tr></table></div>`;
   const div=document.createElement('div');div.innerHTML=html;document.body.appendChild(div);
   html2pdf().from(div).set({margin:.5,filename:`timeflow_${empresaActiva}_${p}.pdf`}).save().then(()=>document.body.removeChild(div));
@@ -645,8 +819,8 @@ function whatsapp(){
   const yr=currentDate.getFullYear(),mo=currentDate.getMonth();
   const p=`${yr}-${String(mo+1).padStart(2,'0')}-01`,u=`${yr}-${String(mo+1).padStart(2,'0')}-${new Date(yr,mo+1,0).getDate()}`;
   const dias=diasRango(p,u),tot=getMesStats(yr,mo);const{h,m}=m2hm(tot.total);
-  let txt=`📊 *RESUMEN — ${empresaActiva}*\n${p} → ${u}\n\n`;
-  for(const d of dias)if(d.min>0)txt+=`📅 ${d.fecha}: ${d.hstr} · ${d.imp.toFixed(2)} €\n`;
+  let txt=`📊 *${empresaActiva} — ${MN[mo]} ${yr}*\n\n`;
+  for(const d of dias)if(d.min>0)txt+=`📅 ${d.fecha}: *${d.hstr}* · ${d.imp.toFixed(2)} €\n`;
   txt+=`\n✅ *TOTAL: ${h}h ${String(m).padStart(2,'0')}m*\n💰 *${tot.imp.toFixed(2)} €*`;
   window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
 }
