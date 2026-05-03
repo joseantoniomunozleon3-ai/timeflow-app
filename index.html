@@ -125,6 +125,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .nbtn{background:#f1f3f8;border:2px solid var(--border);border-radius:10px;color:var(--mid);font-family:var(--sans);font-size:.72rem;font-weight:700;padding:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
 .nbtn.in:active{background:var(--greeng);border-color:var(--greenb);color:var(--green)}
 .nbtn.out:active{background:var(--redg);border-color:var(--redb);color:var(--red)}
+.nbtn.in.punched{background:var(--greeng);border-color:var(--green);color:var(--green);font-weight:800}
+.nbtn.out.punched{background:var(--redg);border-color:var(--red);color:var(--red);font-weight:800}
+
+/* MODAL PROPIO */
+.tf-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s}
+.tf-overlay.show{opacity:1;pointer-events:all}
+.tf-modal{background:#fff;border-radius:22px 22px 0 0;padding:28px 22px 36px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,1,.6,1)}
+.tf-overlay.show .tf-modal{transform:translateY(0)}
+.tf-modal-icon{font-size:2.4rem;text-align:center;margin-bottom:10px}
+.tf-modal-title{font-size:1.15rem;font-weight:800;color:var(--text);text-align:center;margin-bottom:6px}
+.tf-modal-sub{font-size:.85rem;font-weight:500;color:var(--mid);text-align:center;margin-bottom:22px;line-height:1.5}
+.tf-modal-input{width:100%;background:#f1f3f8;border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--sans);font-size:1rem;font-weight:600;padding:13px 14px;outline:none;margin-bottom:16px;transition:all .15s;-webkit-appearance:none}
+.tf-modal-input:focus{border-color:#1e3a5f;background:#fff;box-shadow:0 0 0 3px rgba(30,58,95,.13)}
+.tf-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tf-modal-btns.single{grid-template-columns:1fr}
+.tf-mbtn{font-family:var(--sans);font-size:.9rem;font-weight:700;padding:14px;border-radius:14px;border:none;cursor:pointer;transition:all .15s}
+.tf-mbtn.cancel{background:#f1f3f8;color:var(--mid)}
+.tf-mbtn.cancel:active{background:#e2e8f0}
+.tf-mbtn.confirm{background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;box-shadow:0 4px 14px rgba(30,58,95,.3)}
+.tf-mbtn.confirm:active{opacity:.85;transform:scale(.97)}
+.tf-mbtn.danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;box-shadow:0 4px 14px rgba(239,68,68,.3)}
+.tf-mbtn.danger:active{opacity:.85}
 
 /* TOTAL BAR */
 .total-bar{padding:16px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border)}
@@ -189,6 +211,21 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 </style>
 </head>
 <body>
+
+<!-- MODAL PROPIO -->
+<div class="tf-overlay" id="tfOverlay">
+  <div class="tf-modal">
+    <div class="tf-modal-icon" id="tfModalIcon">💾</div>
+    <div class="tf-modal-title" id="tfModalTitle">Título</div>
+    <div class="tf-modal-sub" id="tfModalSub">Subtítulo</div>
+    <input class="tf-modal-input" id="tfModalInput" type="text" style="display:none">
+    <div class="tf-modal-btns" id="tfModalBtns">
+      <button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button>
+      <button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
 
   <div class="hdr">
@@ -429,10 +466,22 @@ function syncSelect(){
   empresas.forEach(e=>{const o=document.createElement('option');o.value=e;o.text=e;if(e===empresaActiva)o.selected=true;$('empresaSelect').appendChild(o)});
 }
 
-function cambiarEmpresa(){datosEmpresas[empresaActiva]={workData,globalRate,minHoursPerDay};empresaActiva=$('empresaSelect').value;loadEmpresa();save()}
-function nuevaEmpresa(){const n=prompt('Nombre de la nueva empresa:');if(n&&!empresas.includes(n)){empresas.push(n);datosEmpresas[n]={workData:{},globalRate:15,minHoursPerDay:7.5};empresaActiva=n;save();syncSelect();loadEmpresa()}}
-function editarEmpresa(){const n=prompt('Nuevo nombre:',empresaActiva);if(n&&n!==empresaActiva&&!empresas.includes(n)){const i=empresas.indexOf(empresaActiva);empresas[i]=n;datosEmpresas[n]=datosEmpresas[empresaActiva];delete datosEmpresas[empresaActiva];empresaActiva=n;save();syncSelect();loadEmpresa()}}
-function eliminarEmpresa(){if(empresas.length===1){alert('Necesitas al menos una empresa');return}if(confirm(`¿Eliminar "${empresaActiva}"?`)){const i=empresas.indexOf(empresaActiva);empresas.splice(i,1);delete datosEmpresas[empresaActiva];empresaActiva=empresas[0];save();syncSelect();loadEmpresa()}}
+function nuevaEmpresa(){
+  tfPrompt({icon:'🏢',title:'Nueva empresa',sub:'Introduce el nombre:',placeholder:'Nombre de la empresa',confirmTxt:'Crear',onConfirm:n=>{
+    if(n&&!empresas.includes(n)){empresas.push(n);datosEmpresas[n]={workData:{},globalRate:15,minHoursPerDay:7.5};empresaActiva=n;save();syncSelect();loadEmpresa()}
+  }});
+}
+function editarEmpresa(){
+  tfPrompt({icon:'✏️',title:'Editar empresa',sub:'Nuevo nombre:',placeholder:empresaActiva,defaultVal:empresaActiva,confirmTxt:'Guardar',onConfirm:n=>{
+    if(n&&n!==empresaActiva&&!empresas.includes(n)){const i=empresas.indexOf(empresaActiva);empresas[i]=n;datosEmpresas[n]=datosEmpresas[empresaActiva];delete datosEmpresas[empresaActiva];empresaActiva=n;save();syncSelect();loadEmpresa()}
+  }});
+}
+function eliminarEmpresa(){
+  if(empresas.length===1){tfAlert({icon:'⚠️',title:'No se puede eliminar',sub:'Necesitas al menos una empresa.'});return}
+  tfConfirm({icon:'🗑️',title:'Eliminar empresa',sub:`¿Eliminar "${empresaActiva}"?\nEsta acción no se puede deshacer.`,confirmTxt:'Eliminar',confirmCls:'danger',onConfirm:()=>{
+    const i=empresas.indexOf(empresaActiva);empresas.splice(i,1);delete datosEmpresas[empresaActiva];empresaActiva=empresas[0];save();syncSelect();loadEmpresa();
+  }});
+}
 
 function calcMin(e,s,p){if(!e||!s)return 0;const[eh,em]=e.split(':').map(Number),[sh,sm]=s.split(':').map(Number);let eM=eh*60+em,sM=sh*60+sm;if(sM<eM)sM+=1440;return Math.max(0,sM-eM-(p||0))}
 function getDia(dk){const d=workData[dk]||{},m=d.manana||{},t=d.tarde||{};return{total:calcMin(m.entrada,m.salida,m.pausa)+calcMin(t.entrada,t.salida,t.pausa),tiene:!!(m.entrada&&m.salida)||(t.entrada&&t.salida)}}
@@ -471,6 +520,8 @@ function loadDay(dk){
   $('mananaEntrada').value=m.entrada||'';$('mananaSalida').value=m.salida||'';$('mananaPausa').value=m.pausa||0;
   $('tardeEntrada').value=t.entrada||'';$('tardeSalida').value=t.salida||'';$('tardePausa').value=t.pausa||0;
   $('selectedDateTitle').textContent=fechaBonita(dk);
+  // Resetear color fijo de botones
+  ['mananaEntradaAhora','mananaSalidaAhora','tardeEntradaAhora','tardeSalidaAhora'].forEach(id=>$(id).classList.remove('punched'));
   preview();
 }
 
@@ -490,11 +541,14 @@ function preview(){
 
 function guardarDia(){
   if(!selectedDateKey)return;
-  workData[selectedDateKey]={
-    manana:{entrada:$('mananaEntrada').value,salida:$('mananaSalida').value,pausa:parseInt($('mananaPausa').value)||0},
-    tarde:{entrada:$('tardeEntrada').value,salida:$('tardeSalida').value,pausa:parseInt($('tardePausa').value)||0}
-  };
-  save();renderCal();calcStats();
+  const fb=fechaBonita(selectedDateKey);
+  tfConfirm({icon:'💾',title:'Guardar día',sub:`¿Guardar los datos de\n${fb}?`,confirmTxt:'Guardar',confirmCls:'confirm',onConfirm:()=>{
+    workData[selectedDateKey]={
+      manana:{entrada:$('mananaEntrada').value,salida:$('mananaSalida').value,pausa:parseInt($('mananaPausa').value)||0},
+      tarde:{entrada:$('tardeEntrada').value,salida:$('tardeSalida').value,pausa:parseInt($('tardePausa').value)||0}
+    };
+    save();renderCal();calcStats();
+  }});
 }
 
 function limpiar(){
@@ -502,7 +556,12 @@ function limpiar(){
   $('mananaPausa').value=0;$('tardePausa').value=0;preview();
 }
 
-function ahora(id){const n=new Date();$(id).value=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;preview()}
+function ahora(id,btn){
+  const n=new Date();
+  $(id).value=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  if(btn){btn.classList.add('punched');}
+  preview();
+}
 
 function getWeeks(yr,mo){
   const weeks=[],last=new Date(yr,mo+1,0);
@@ -595,10 +654,10 @@ function whatsapp(){
 // Eventos
 $('prevMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()-1);renderCal();calcStats()};
 $('nextMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()+1);renderCal();calcStats()};
-$('mananaEntradaAhora').onclick=()=>ahora('mananaEntrada');
-$('mananaSalidaAhora').onclick=()=>ahora('mananaSalida');
-$('tardeEntradaAhora').onclick=()=>ahora('tardeEntrada');
-$('tardeSalidaAhora').onclick=()=>ahora('tardeSalida');
+$('mananaEntradaAhora').onclick=function(){ahora('mananaEntrada',this)};
+$('mananaSalidaAhora').onclick=function(){ahora('mananaSalida',this)};
+$('tardeEntradaAhora').onclick=function(){ahora('tardeEntrada',this)};
+$('tardeSalidaAhora').onclick=function(){ahora('tardeSalida',this)};
 $('saveDayBtn').onclick=guardarDia;
 $('clearDayBtn').onclick=limpiar;
 $('updateConfigBtn').onclick=()=>{globalRate=parseFloat($('globalHourlyRate').value)||15;minHoursPerDay=parseFloat($('minDailyHours').value)||0;save();renderCal();preview();calcStats()};
@@ -612,6 +671,42 @@ $('empresaSelect').onchange=cambiarEmpresa;
 $('nuevaEmpresaBtn').onclick=nuevaEmpresa;
 $('editarEmpresaBtn').onclick=editarEmpresa;
 $('eliminarEmpresaBtn').onclick=eliminarEmpresa;
+
+// ── MODAL SYSTEM ──
+let _tfCb=null;
+function _tfShow(){const o=$('tfOverlay');o.classList.add('show');setTimeout(()=>{const i=$('tfModalInput');if(i.style.display!=='none')i.focus()},320)}
+function _tfHide(){$('tfOverlay').classList.remove('show');_tfCb=null}
+$('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()});
+$('tfBtnCancel').onclick=_tfHide;
+$('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
+$('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
+function _tfSetup({icon,title,sub,confirmTxt,confirmCls,showInput,placeholder,defaultVal}){
+  $('tfModalIcon').textContent=icon||'ℹ️';
+  $('tfModalTitle').textContent=title||'';
+  $('tfModalSub').style.whiteSpace='pre-line';$('tfModalSub').textContent=sub||'';
+  const inp=$('tfModalInput');
+  if(showInput){inp.style.display='';inp.placeholder=placeholder||'';inp.value=defaultVal||''}
+  else inp.style.display='none';
+  const btn=$('tfBtnConfirm');btn.textContent=confirmTxt||'Aceptar';btn.className=`tf-mbtn ${confirmCls||'confirm'}`;
+}
+function tfConfirm({icon,title,sub,confirmTxt,confirmCls,onConfirm}){
+  _tfSetup({icon,title,sub,confirmTxt,confirmCls,showInput:false});
+  $('tfModalBtns').className='tf-modal-btns';$('tfBtnCancel').style.display='';
+  _tfCb=()=>onConfirm&&onConfirm();_tfShow();
+}
+function tfPrompt({icon,title,sub,placeholder,defaultVal,confirmTxt,onConfirm}){
+  _tfSetup({icon,title,sub,confirmTxt,showInput:true,placeholder,defaultVal});
+  $('tfModalBtns').className='tf-modal-btns';$('tfBtnCancel').style.display='';
+  _tfCb=(v)=>onConfirm&&onConfirm(v);_tfShow();
+}
+function tfAlert({icon,title,sub}){
+  _tfSetup({icon,title,sub,confirmTxt:'Entendido',confirmCls:'confirm',showInput:false});
+  $('tfModalBtns').className='tf-modal-btns single';$('tfBtnCancel').style.display='none';
+  _tfCb=null;_tfShow();
+}
+
+function cambiarEmpresa(){datosEmpresas[empresaActiva]={workData,globalRate,minHoursPerDay};empresaActiva=$('empresaSelect').value;loadEmpresa();save()}
+
 ['mananaEntrada','mananaSalida','mananaPausa','tardeEntrada','tardeSalida','tardePausa'].forEach(id=>$(id).addEventListener('input',preview));
 document.querySelectorAll('.stab').forEach(btn=>{
   btn.addEventListener('click',()=>{
