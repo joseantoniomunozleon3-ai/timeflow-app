@@ -3,36 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f3b4a">
-    
-    <!-- Manifest embebido (data URL) para que sea PWA sin archivo externo -->
-    <link rel="manifest" href="data:application/manifest+json,{
-      \"name\": \"TimeFlow Control Horario\",
-      \"short_name\": \"TimeFlow\",
-      \"description\": \"Registro de jornada laboral con doble turno\",
-      \"start_url\": \".\",
-      \"display\": \"standalone\",
-      \"theme_color\": \"#0f3b4a\",
-      \"background_color\": \"#e0f2f1\",
-      \"icons\": [
-        {
-          \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e6f5c'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='white'%3E⏱%3C/text%3E%3C/svg%3E\",
-          \"sizes\": \"any\",
-          \"type\": \"image/svg+xml\",
-          \"purpose\": \"any maskable\"
-        },
-        {
-          \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e6f5c'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='white'%3E⏱%3C/text%3E%3C/svg%3E\",
-          \"sizes\": \"192x192\",
-          \"type\": \"image/svg+xml\"
-        },
-        {
-          \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e6f5c'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='white'%3E⏱%3C/text%3E%3C/svg%3E\",
-          \"sizes\": \"512x512\",
-          \"type\": \"image/svg+xml\"
-        }
-      ]
-    }">
     <title>TimeFlow · Doble turno · PWA completa</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -151,7 +123,7 @@
             <button id="toggleDetailsBtn" class="toggle-btn">💰 Mostrar detalles</button>
         </div>
     </div>
-    <!-- Pestaña Resúmenes (totales exactos en minutos) -->
+    <!-- Pestaña Resúmenes -->
     <div id="statsTab" class="tab-pane">
         <div class="stats-container">
             <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
@@ -184,35 +156,15 @@
             <div id="informeResultado" class="preview-informe">Aquí aparecerán los informes</div>
         </div>
     </div>
-    <footer>✅ PWA completa · Instalable · Sin servidor extra · Totales exactos</footer>
+    <footer>✅ PWA completa · Instalable · Totales exactos</footer>
 </div>
 
 <script>
-    // ------------------------- REGISTRO DEL SERVICE WORKER (PWA) -------------------------
+    // ------------------------- SERVICE WORKER (registro estándar) -------------------------
     if ('serviceWorker' in navigator) {
-        // Generamos el código del service worker como un Blob
-        const swCode = `
-            const CACHE_NAME = "timeflow-v1";
-            const urlsToCache = [".", "./index.html", "./manifest.json"];
-            self.addEventListener("install", event => {
-                event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-                self.skipWaiting();
-            });
-            self.addEventListener("fetch", event => {
-                event.respondWith(caches.match(event.request).then(response => response || fetch(event.request)));
-            });
-            self.addEventListener("activate", event => {
-                event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(key => { if(key !== CACHE_NAME) return caches.delete(key); }))));
-                self.clients.claim();
-            });
-        `;
-        const blob = new Blob([swCode], {type: 'application/javascript'});
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).then(reg => {
-            console.log("Service Worker registrado correctamente");
-        }).catch(err => {
-            console.log("Error al registrar SW (posiblemente en local)", err);
-        });
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Service Worker registrado correctamente', reg))
+            .catch(err => console.log('Error al registrar SW:', err));
     }
 
     // ------------------------- MULTIEMPRESA Y DATOS -------------------------
@@ -522,7 +474,8 @@
         for(let d of dias){
             html += `<tr><td>${d.fecha}</td><td>${d.mananaEnt}→${d.mananaSal} (${d.mananaPau})</td><td>${d.tardeEnt}→${d.tardeSal} (${d.tardePau})</td><td>${d.horasMostrar}</td><td>${d.importe.toFixed(2)} €</td></tr>`;
         }
-        html += `<tr style="font-weight:bold"><td colspan="3">TOTAL</td><td>${horas}h ${mins}m</td><td>${totals.totalImporte.toFixed(2)} €</td></tr></table></div>`;
+        html += `<tr style="font-weight:bold"><td colspan="3">TOTAL</td><td>${horas}h ${mins}m</td><td>${totals.totalImporte.toFixed(2)} €</td></tr>`;
+        html += `</table></div>`;
         let div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div);
         html2pdf().from(div).set({ margin:0.5, filename:`informe_${empresaActiva}_${primero}.pdf` }).save().then(()=>document.body.removeChild(div));
     }
