@@ -820,12 +820,17 @@ function textoInforme(dias,tMin,tImp){
   return ln.join('\n');
 }
 
+function fmtFecha(dk){
+  const[y,m,d]=dk.split('-');
+  return `${d} ${MN[parseInt(m)-1].substring(0,3)} ${y}`;
+}
+
 async function generarPDF(){
   const yr=currentDate.getFullYear(),mo=currentDate.getMonth();
   const p=`${yr}-${String(mo+1).padStart(2,'0')}-01`,u=`${yr}-${String(mo+1).padStart(2,'0')}-${new Date(yr,mo+1,0).getDate()}`;
   const dias=diasRango(p,u),tot=getMesStats(yr,mo);const{h,m}=m2hm(tot.total);
   let html=`<div style="font-family:Arial;padding:1rem"><h2 style="color:#1e3a5f">${empresaActiva} — ${MN[mo]} ${yr}</h2><table border="1" cellpadding="6" style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:12px"><tr style="background:#1e3a5f;color:white"><th>Fecha</th><th>Mañana</th><th>Tarde</th><th>Horas</th><th>€</th></tr>`;
-  for(const d of dias.filter(x=>x.min>0||x.mE!=='--'||x.tE!=='--'))html+=`<tr><td>${d.fecha}</td><td>${d.mE}→${d.mS} (${d.mP}m)</td><td>${d.tE}→${d.tS} (${d.tP}m)</td><td>${d.hstr}</td><td>${d.imp.toFixed(2)}</td></tr>`;
+  for(const d of dias.filter(x=>x.min>0||x.mE!=='--'||x.tE!=='--'))html+=`<tr><td>${fmtFecha(d.fecha)}</td><td>${d.mE}→${d.mS} (${d.mP}m)</td><td>${d.tE}→${d.tS} (${d.tP}m)</td><td>${d.hstr}</td><td>${d.imp.toFixed(2)}</td></tr>`;
   html+=`<tr style="font-weight:bold;background:#eef0f8"><td colspan="3">TOTAL</td><td>${h}h ${String(m).padStart(2,'0')}m</td><td>${tot.imp.toFixed(2)} €</td></tr></table></div>`;
   const div=document.createElement('div');div.innerHTML=html;document.body.appendChild(div);
   html2pdf().from(div).set({margin:.5,filename:`timeflow_${empresaActiva}_${p}.pdf`}).save().then(()=>document.body.removeChild(div));
@@ -836,7 +841,7 @@ function whatsapp(){
   const p=`${yr}-${String(mo+1).padStart(2,'0')}-01`,u=`${yr}-${String(mo+1).padStart(2,'0')}-${new Date(yr,mo+1,0).getDate()}`;
   const dias=diasRango(p,u),tot=getMesStats(yr,mo);const{h,m}=m2hm(tot.total);
   let txt=`📊 *${empresaActiva} — ${MN[mo]} ${yr}*\n\n`;
-  for(const d of dias)if(d.min>0)txt+=`📅 ${d.fecha}: *${d.hstr}* · ${d.imp.toFixed(2)} €\n`;
+  for(const d of dias)if(d.min>0)txt+=`📅 ${fmtFecha(d.fecha)}: *${d.hstr}* · ${d.imp.toFixed(2)} €\n`;
   txt+=`\n✅ *TOTAL: ${h}h ${String(m).padStart(2,'0')}m*\n💰 *${tot.imp.toFixed(2)} €*`;
   window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
 }
