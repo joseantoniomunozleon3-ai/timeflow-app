@@ -1,4 +1,4 @@
-const CACHE_NAME = "timeflow-v3";
+const CACHE_NAME = "timeflow-v1";
 const urlsToCache = [
   "/",
   "/index.html",
