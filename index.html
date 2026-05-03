@@ -58,6 +58,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .hdr-btns{display:flex;gap:5px}
 .ibtn{width:32px;height:32px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r);color:#fff;font-size:.9rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
 .ibtn:active{background:rgba(255,255,255,.38)}
+/* Botón ojo activo */
+.ibtn.eye-on{background:rgba(255,255,255,.38);border-color:rgba(255,255,255,.7)}
+
+/* Ocultar importes globalmente */
+.hide-money .money-val{
+  filter:blur(6px);
+  pointer-events:none;
+  user-select:none;
+  transition:filter .2s;
+}
+.money-val{transition:filter .2s}
 
 /* NAV */
 .nav{background:linear-gradient(135deg,#1e3a5f 0%,#2e5f8a 100%);display:flex;padding:0 10px 10px;gap:6px;position:sticky;top:62px;z-index:20}
@@ -261,6 +272,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .rpt-act-btn.wa:active{background:var(--green);color:#fff}
 .rpt-empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:.85rem;font-weight:500}
 
+/* OCULTAR IMPORTES */
+.money-val{transition:filter .25s,opacity .25s}
+.hide-money .money-val{filter:blur(7px);opacity:.35;user-select:none;pointer-events:none}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -293,6 +308,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
       <select id="empresaSelect"></select>
     </div>
     <div class="hdr-btns">
+      <button class="ibtn" id="toggleMoneyBtn" title="Mostrar/ocultar importes">🙈</button>
       <button class="ibtn" id="nuevaEmpresaBtn">＋</button>
       <button class="ibtn" id="editarEmpresaBtn">✎</button>
       <button class="ibtn" id="eliminarEmpresaBtn">✕</button>
@@ -358,7 +374,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 
       <div class="fire-msg" id="mensajeExtra">🔥 ¡VAYA TELITA DE DÍA! 🔥</div>
 
-      <div class="importe-row">
+      <div class="importe-row money-val">
         <div class="importe-lbl">💰 Importe estimado</div>
         <div class="importe-val"><span id="importeDia">0.00</span> €</div>
       </div>
@@ -385,13 +401,13 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
     <div class="section-title">Semanas del mes</div>
     <div class="card" style="margin-bottom:12px">
       <div class="card-accent green"></div>
-      <div class="week-head"><span>Semana</span><span>Horas</span><span>Importe</span></div>
+      <div class="week-head"><span>Semana</span><span>Horas</span><span class="money-val">Importe</span></div>
       <div id="weeklyRowsContainer"></div>
     </div>
 
     <div class="month-total" id="monthSummaryShort">
       <div><div class="mtl">Total mes</div><div class="mth">--h --m</div></div>
-      <div class="mte">-- €</div>
+      <div class="mte money-val">-- €</div>
     </div>
   </div>
 
@@ -421,7 +437,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
         </div>
         <div class="rpt-hero-badge">
           <div class="rpt-hero-badge-lbl">Importe</div>
-          <div class="rpt-hero-badge-val" id="rptHeroEur">— €</div>
+          <div class="rpt-hero-badge-val money-val" id="rptHeroEur">— €</div>
         </div>
       </div>
       <div class="rpt-hero-stats">
@@ -681,12 +697,12 @@ function calcStats(){
     let tM=0,tI=0;w.days.forEach(dk=>{const s=getDiaStats(dk);tM+=s.total;tI+=s.imp});
     const{h,m}=m2hm(tM);
     const row=document.createElement('div');row.className='week-row';
-    row.innerHTML=`<span class="wn">Sem ${w.n}</span><span class="wh">${h}h ${String(m).padStart(2,'0')}m</span><span class="we">${tI.toFixed(2)} €</span>`;
+    row.innerHTML=`<span class="wn">Sem ${w.n}</span><span class="wh">${h}h ${String(m).padStart(2,'0')}m</span><span class="we money-val">${tI.toFixed(2)} €</span>`;
     $('weeklyRowsContainer').appendChild(row);
   }
   const tot=getMesStats(yr,mo);const{h,m}=m2hm(tot.total);
   const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  $('monthSummaryShort').innerHTML=`<div><div class="mtl">${MN[mo]} ${yr}</div><div class="mth">${h}h ${String(m).padStart(2,'0')}m</div></div><div class="mte">${tot.imp.toFixed(2)} €</div>`;
+  $('monthSummaryShort').innerHTML=`<div><div class="mtl">${MN[mo]} ${yr}</div><div class="mth">${h}h ${String(m).padStart(2,'0')}m</div></div><div class="mte money-val">${tot.imp.toFixed(2)} €</div>`;
 }
 
 function diasRango(desde,hasta){
@@ -751,7 +767,7 @@ function renderInforme(dias,titulo,periodo,tMin,tImp){
         <div class="rpt-day-dot"></div>
         <div class="rpt-day-fecha">${fechaLabel}</div>
         <span class="rpt-day-h">${d.hstr}</span>
-        <span class="rpt-day-eur">${d.imp.toFixed(2)} €</span>
+        <span class="rpt-day-eur money-val">${d.imp.toFixed(2)} €</span>
         <span class="rpt-day-chevron">▾</span>
       </div>
       <div class="rpt-day-body">
@@ -845,6 +861,22 @@ $('empresaSelect').onchange=cambiarEmpresa;
 $('nuevaEmpresaBtn').onclick=nuevaEmpresa;
 $('editarEmpresaBtn').onclick=editarEmpresa;
 $('eliminarEmpresaBtn').onclick=eliminarEmpresa;
+
+// ── OCULTAR IMPORTES ──
+// Por defecto ocultos. Se guarda preferencia en localStorage.
+let moneyHidden = localStorage.getItem('tf_money_hidden') !== '0'; // oculto salvo que el usuario lo haya mostrado explícitamente
+function applyMoneyState(){
+  document.body.classList.toggle('hide-money', moneyHidden);
+  const btn=$('toggleMoneyBtn');
+  btn.textContent = moneyHidden ? '👁' : '🙈';
+  btn.title = moneyHidden ? 'Mostrar importes' : 'Ocultar importes';
+}
+$('toggleMoneyBtn').onclick=()=>{
+  moneyHidden=!moneyHidden;
+  localStorage.setItem('tf_money_hidden', moneyHidden ? '1' : '0');
+  applyMoneyState();
+};
+applyMoneyState();
 
 // ── MODAL SYSTEM ──
 let _tfCb=null;
