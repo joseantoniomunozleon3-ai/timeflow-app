@@ -187,6 +187,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
 /* STATS */
 .section-title{font-size:.72rem;font-weight:700;color:#1e3a5f;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;padding-left:2px}
+.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:10px 16px;background:var(--surface);border-radius:var(--rl);border:2px solid var(--border);margin-bottom:8px;box-shadow:0 2px 8px rgba(99,102,241,.08);transition:all .2s}
+.collapsible-header:hover{background:var(--indigog);border-color:#1e3a5f}
+.collapse-icon{font-size:.9rem;color:var(--mid);transition:transform .3s}
+.collapsible-header.open .collapse-icon{transform:rotate(180deg)}
+.collapsible-content{overflow:hidden;max-height:500px;transition:max-height .35s ease,opacity .3s;opacity:1}
+.collapsible-content.collapsed{max-height:0;opacity:0}
 .cfg-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
 .cfg-btn{margin:0 16px 14px;width:calc(100% - 32px);font-family:var(--sans);font-size:.8rem;font-weight:700;padding:12px;border-radius:var(--r);border:none;background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(30,58,95,.3)}
 .cfg-btn:active{opacity:.85}
@@ -390,14 +396,19 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 
   <!-- PANE STATS -->
   <div class="pane" id="statsPane">
-    <div class="section-title">Configuración</div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-accent amber"></div>
-      <div class="cfg-fields">
-        <div class="field"><label>💰 €/hora</label><input type="number" id="globalHourlyRate" step="0.5" value="15"></div>
-        <div class="field"><label>⏱ Mín. h/día</label><input type="number" id="minDailyHours" step="0.5" value="7.5"></div>
+    <div class="section-title collapsible-header" id="configToggle">
+      Configuración
+      <span class="collapse-icon">▾</span>
+    </div>
+    <div class="collapsible-content collapsed" id="configContent">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-accent amber"></div>
+        <div class="cfg-fields">
+          <div class="field"><label>💰 €/hora</label><input type="number" id="globalHourlyRate" step="0.5" value="15"></div>
+          <div class="field"><label>⏱ Mín. h/día</label><input type="number" id="minDailyHours" step="0.5" value="7.5"></div>
+        </div>
+        <button class="cfg-btn" id="updateConfigBtn">✓ Aplicar configuración</button>
       </div>
-      <button class="cfg-btn" id="updateConfigBtn">✓ Aplicar configuración</button>
     </div>
 
     <div class="section-title">Semanas del mes</div>
@@ -860,6 +871,10 @@ $('tardeSalidaAhora').onclick=function(){ahora('tardeSalida',this)};
 $('saveDayBtn').onclick=guardarDia;
 $('clearDayBtn').onclick=limpiar;
 $('updateConfigBtn').onclick=()=>{globalRate=parseFloat($('globalHourlyRate').value)||15;minHoursPerDay=parseFloat($('minDailyHours').value)||0;save();renderCal();preview();calcStats()};
+$('configToggle').onclick=()=>{
+  const hdr=$('configToggle'),cnt=$('configContent');
+  hdr.classList.toggle('open');cnt.classList.toggle('collapsed');
+};
 $('mesActualBtn').onclick=()=>informeMes(0);
 $('mesAnteriorBtn').onclick=()=>informeMes(-1);
 $('mesSiguienteBtn').onclick=()=>informeMes(1);
