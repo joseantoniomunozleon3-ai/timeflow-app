@@ -413,6 +413,20 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
       <div><div class="mtl">Total mes</div><div class="mth">--h --m</div></div>
       <div class="mte money-val">-- €</div>
     </div>
+
+    <div class="section-title">Copia de seguridad</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-accent violet"></div>
+      <div style="padding:14px 16px">
+        <div style="font-size:.78rem;color:var(--mid);font-weight:500;margin-bottom:12px;line-height:1.5">Exporta todos tus datos a un archivo JSON. Guárdalo en el móvil, en el correo o en la nube para no perderlos nunca.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="abtn save" id="exportBtn">&#128228; Exportar</button>
+          <button class="abtn clr" id="importBtn">&#128229; Importar</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+        <div id="backupInfo" style="margin-top:10px;font-size:.72rem;color:var(--dim);text-align:center"></div>
+      </div>
+    </div>
   </div>
 
   <!-- PANE REPORTS -->
@@ -786,6 +800,51 @@ function whatsapp(){
   window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
 }
 
+// ── EXPORTAR / IMPORTAR ──
+function exportarDatos(){
+  const datos = localStorage.getItem('tf_multi');
+  if(!datos){ tfAlert({icon:'⚠️',title:'Sin datos',sub:'No hay datos guardados para exportar.'}); return; }
+  const obj = JSON.parse(datos);
+  const empresasCount = (obj.empresas||[]).length;
+  const totalDias = Object.values(obj.datos||{}).reduce((acc,e)=>acc+Object.keys(e.workData||{}).length,0);
+  const fecha = new Date().toISOString().slice(0,10);
+  const blob = new Blob([JSON.stringify(obj, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `timeflow_backup_${fecha}.json`; a.click();
+  URL.revokeObjectURL(url);
+  $('backupInfo').textContent = `✅ ${empresasCount} empresa(s) · ${totalDias} día(s) exportados`;
+  setTimeout(()=>$('backupInfo').textContent='', 4000);
+}
+
+function importarDatos(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const obj = JSON.parse(e.target.result);
+      if(!obj.empresas || !obj.datos) throw new Error('Formato inválido');
+      tfConfirm({
+        icon:'📥',
+        title:'Importar copia de seguridad',
+        sub:'Esto reemplazará todos los datos actuales.\n¿Continuar?',
+        confirmTxt:'Importar',
+        confirmCls:'confirm',
+        onConfirm:()=>{
+          localStorage.setItem('tf_multi', JSON.stringify(obj));
+          load();
+          renderCal(); calcStats();
+          $('backupInfo').textContent = `✅ Datos restaurados correctamente`;
+          setTimeout(()=>$('backupInfo').textContent='', 4000);
+        }
+      });
+    } catch(err) {
+      tfAlert({icon:'❌',title:'Error al importar',sub:'El archivo no es válido o está corrupto.'});
+    }
+  };
+  reader.readAsText(file);
+}
+
 // Eventos
 $('prevMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()-1);renderCal();calcStats()};
 $('nextMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()+1);renderCal();calcStats()};
@@ -806,6 +865,9 @@ $('empresaSelect').onchange=cambiarEmpresa;
 $('nuevaEmpresaBtn').onclick=nuevaEmpresa;
 $('editarEmpresaBtn').onclick=editarEmpresa;
 $('eliminarEmpresaBtn').onclick=eliminarEmpresa;
+$('exportBtn').onclick=exportarDatos;
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=e=>{ importarDatos(e.target.files[0]); e.target.value=''; };
 
 // ── OCULTAR IMPORTES ──
 // Por defecto ocultos. Se guarda preferencia en localStorage.
