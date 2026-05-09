@@ -2,8 +2,8 @@
   "name": "TimeFlow PRO",
   "short_name": "TimeFlow",
   "description": "Control de horas y jornada laboral",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/timeflow-app/index.html",
+  "scope": "/timeflow-app/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f0f4f8",
@@ -14,15 +14,25 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ],
-  "screenshots": [],
-  "categories": ["productivity", "utilities"]
+  ]
 }
