@@ -1,7 +1,7 @@
 // ── TimeFlow PRO — Service Worker ──
 // Estrategia: Cache-First para el shell, Network-First para recursos externos
 
-const CACHE_NAME = 'timeflow-v1';
+const CACHE_NAME = 'timeflow-v2';
 
 // Recursos del shell de la app (lo que tenemos en local)
 const SHELL_ASSETS = [
