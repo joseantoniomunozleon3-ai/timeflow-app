@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -938,6 +938,38 @@ document.querySelectorAll('.ntab').forEach(btn=>{
   });
 });
 load();if(!selectedDateKey)selectedDateKey=today();loadDay(selectedDateKey);
+
+// ── RECORDATORIO DE BACKUP ──
+(function(){
+  const DIAS = 7; // avisar cada 7 días
+  const KEY = 'tf_last_export_reminder';
+  const hoy = new Date().toISOString().slice(0,10);
+  const ultima = localStorage.getItem(KEY);
+  if(!ultima){
+    localStorage.setItem(KEY, hoy);
+    return;
+  }
+  const diff = Math.floor((new Date(hoy) - new Date(ultima)) / 86400000);
+  if(diff >= DIAS){
+    setTimeout(()=>{
+      tfConfirm({
+        icon:'💾',
+        title:'¿Has hecho copia de seguridad?',
+        sub:`Han pasado ${diff} días desde la última vez.\nExporta tus datos para no perderlos.`,
+        confirmTxt:'Exportar ahora',
+        confirmCls:'confirm',
+        onConfirm:()=>{
+          localStorage.setItem(KEY, hoy);
+          exportarDatos();
+        }
+      });
+      // Si cancela, actualizar fecha igualmente para no molestar hasta la próxima semana
+      const orig = _tfCb;
+      const origHide = _tfHide;
+      $('tfBtnCancel').addEventListener('click', ()=>localStorage.setItem(KEY, hoy), {once:true});
+    }, 1500);
+  }
+})();
 </script>
 </body>
 </html>
