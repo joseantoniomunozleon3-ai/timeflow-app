@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TimeFlow">
 <title>TimeFlow</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
@@ -187,12 +189,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 
 /* STATS */
 .section-title{font-size:.72rem;font-weight:700;color:#1e3a5f;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;padding-left:2px}
-.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:10px 16px;background:var(--surface);border-radius:var(--rl);border:2px solid var(--border);margin-bottom:8px;box-shadow:0 2px 8px rgba(99,102,241,.08);transition:all .2s}
-.collapsible-header:hover{background:var(--indigog);border-color:#1e3a5f}
-.collapse-icon{font-size:.9rem;color:var(--mid);transition:transform .3s}
-.collapsible-header.open .collapse-icon{transform:rotate(180deg)}
-.collapsible-content{overflow:hidden;max-height:500px;transition:max-height .35s ease,opacity .3s;opacity:1}
-.collapsible-content.collapsed{max-height:0;opacity:0}
 .cfg-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
 .cfg-btn{margin:0 16px 14px;width:calc(100% - 32px);font-family:var(--sans);font-size:.8rem;font-weight:700;padding:12px;border-radius:var(--r);border:none;background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(30,58,95,.3)}
 .cfg-btn:active{opacity:.85}
@@ -396,19 +392,14 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 
   <!-- PANE STATS -->
   <div class="pane" id="statsPane">
-    <div class="section-title collapsible-header" id="configToggle">
-      Configuración
-      <span class="collapse-icon">▾</span>
-    </div>
-    <div class="collapsible-content collapsed" id="configContent">
-      <div class="card" style="margin-bottom:12px">
-        <div class="card-accent amber"></div>
-        <div class="cfg-fields">
-          <div class="field"><label>💰 €/hora</label><input type="number" id="globalHourlyRate" step="0.5" value="15"></div>
-          <div class="field"><label>⏱ Mín. h/día</label><input type="number" id="minDailyHours" step="0.5" value="7.5"></div>
-        </div>
-        <button class="cfg-btn" id="updateConfigBtn">✓ Aplicar configuración</button>
+    <div class="section-title">Configuración</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-accent amber"></div>
+      <div class="cfg-fields">
+        <div class="field"><label>💰 €/hora</label><input type="number" id="globalHourlyRate" step="0.5" value="15"></div>
+        <div class="field"><label>⏱ Mín. h/día</label><input type="number" id="minDailyHours" step="0.5" value="7.5"></div>
       </div>
+      <button class="cfg-btn" id="updateConfigBtn">✓ Aplicar configuración</button>
     </div>
 
     <div class="section-title">Semanas del mes</div>
@@ -490,80 +481,14 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 </div>
 
 <script>
-// ── MANIFEST + ICONOS embebidos ──
-(function(){
-  function icon(s){
-    const c=document.createElement('canvas');c.width=c.height=s;
-    const x=c.getContext('2d');
-    const g=x.createLinearGradient(0,0,s,s);g.addColorStop(0,'#1e3a5f');g.addColorStop(1,'#2e5f8a');
-    x.fillStyle=g;
-    const r=s*0.22;
-    x.beginPath();x.moveTo(r,0);x.lineTo(s-r,0);x.quadraticCurveTo(s,0,s,r);
-    x.lineTo(s,s-r);x.quadraticCurveTo(s,s,s-r,s);x.lineTo(r,s);
-    x.quadraticCurveTo(0,s,0,s-r);x.lineTo(0,r);x.quadraticCurveTo(0,0,r,0);
-    x.closePath();x.fill();
-    x.fillStyle='#fff';x.font=`800 ${Math.floor(s*.38)}px sans-serif`;
-    x.textAlign='center';x.textBaseline='middle';x.fillText('TF',s/2,s/2);
-    return c.toDataURL('image/png');
-  }
-  const i192=icon(192),i512=icon(512);
-  // Apple touch icon
-  const la=document.createElement('link');la.rel='apple-touch-icon';la.href=i192;document.head.appendChild(la);
-  // Manifest apuntando a la URL real de la página (funciona en GitHub Pages)
-  const mf={
-    name:'TimeFlow PRO',short_name:'TimeFlow',
-    description:'Control de horas y jornada laboral',
-    start_url: location.href,
-    scope: location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')+1),
-    display:'standalone',orientation:'portrait',
-    background_color:'#f0f4f8',theme_color:'#1e3a5f',
-    icons:[
-      {src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
-      {src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
-    ]
-  };
-  const lm=document.createElement('link');lm.rel='manifest';
-  lm.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));
-  document.head.appendChild(lm);
-})();
 
-// ── SERVICE WORKER embebido ──
-// Registrado desde blob URL — funciona en un solo archivo HTML en GitHub Pages
-if('serviceWorker' in navigator){
-  const PAGE=location.href;
-  const swCode=`
-const CACHE='timeflow-v6';
-const PAGE='`+"`"+`${PAGE}`+"`"+`';
-self.addEventListener('install',e=>{
-  e.waitUntil(
-    caches.open(CACHE).then(c=>c.add(new Request(PAGE,{cache:'reload'}))).then(()=>self.skipWaiting())
-  );
-});
-self.addEventListener('activate',e=>{
-  e.waitUntil(
-    caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())
-  );
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.mode==='navigate'){
-    e.respondWith(caches.match(PAGE).then(r=>r||fetch(e.request)));
-    return;
-  }
-  e.respondWith(
-    caches.match(e.request).then(r=>{
-      if(r)return r;
-      return fetch(e.request).then(res=>{
-        if(res&&res.status===200&&res.type!=='opaque'){
-          const cl=res.clone();caches.open(CACHE).then(c=>c.put(e.request,cl));
-        }
-        return res;
-      }).catch(()=>caches.match(PAGE));
-    })
-  );
-});`;
-  navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode],{type:'application/javascript'})))
-    .then(()=>console.log('✅ TimeFlow SW registrado'))
-    .catch(e=>console.warn('SW:',e));
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('✅ TimeFlow SW registrado, scope:', reg.scope))
+      .catch(err => console.warn('SW no registrado:', err));
+  });
 }
 
 // ── APP LOGIC ──
@@ -871,10 +796,6 @@ $('tardeSalidaAhora').onclick=function(){ahora('tardeSalida',this)};
 $('saveDayBtn').onclick=guardarDia;
 $('clearDayBtn').onclick=limpiar;
 $('updateConfigBtn').onclick=()=>{globalRate=parseFloat($('globalHourlyRate').value)||15;minHoursPerDay=parseFloat($('minDailyHours').value)||0;save();renderCal();preview();calcStats()};
-$('configToggle').onclick=()=>{
-  const hdr=$('configToggle'),cnt=$('configContent');
-  hdr.classList.toggle('open');cnt.classList.toggle('collapsed');
-};
 $('mesActualBtn').onclick=()=>informeMes(0);
 $('mesAnteriorBtn').onclick=()=>informeMes(-1);
 $('mesSiguienteBtn').onclick=()=>informeMes(1);
