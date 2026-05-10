@@ -285,6 +285,92 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 input[type=time]::-webkit-calendar-picker-indicator,
 input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
+
+/* TURNO */
+.trn-hero{background:var(--surface);border-radius:var(--rl);padding:32px 20px 28px;text-align:center;border:2px solid var(--border);margin-bottom:14px}
+.trn-hero-ico{font-size:3rem;margin-bottom:10px}
+.trn-hero-title{font-size:1.2rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.trn-hero-sub{font-size:.82rem;color:var(--mid);font-weight:500;line-height:1.5}
+.trn-header-grid{display:grid;grid-template-columns:1fr 1fr 1fr;padding:14px 16px 16px;gap:8px;align-items:center}
+.trn-lbl{font-size:.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.trn-val{font-size:1.4rem;font-weight:800;color:var(--text)}
+.trn-cron{font-size:1.15rem;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.trn-center{text-align:center}
+.trn-right{text-align:right}
+.trn-job-card{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);margin-bottom:8px;overflow:hidden}
+.trn-job-active-body{padding:14px 16px 8px}
+.trn-jab-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.trn-pulse{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;animation:trn-p 1.4s infinite}
+@keyframes trn-p{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}50%{box-shadow:0 0 0 7px rgba(16,185,129,0)}}
+.trn-jab-desc{font-size:.95rem;font-weight:700;color:var(--text);flex:1}
+.trn-jab-meta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mid);font-weight:600}
+.trn-job-timer{font-size:.85rem;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.trn-job-actions{padding:0 16px 14px}
+.trn-fin-btn{width:100%;background:var(--redg);border:2px solid var(--redb);color:var(--red);font-family:var(--sans);font-size:.85rem;font-weight:800;padding:12px;border-radius:var(--r);cursor:pointer}
+.trn-fin-btn:active{background:var(--red);color:#fff}
+.trn-nuevo-btn{width:100%;background:var(--indigog);border:2px dashed #1e3a5f;color:#1e3a5f;font-family:var(--sans);font-size:.9rem;font-weight:700;padding:15px;border-radius:var(--rl);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.trn-nuevo-btn:active{background:#1e3a5f;color:#fff}
+.trn-close-btn{width:100%;background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;font-family:var(--sans);font-size:.85rem;font-weight:700;padding:14px;border:none;border-radius:var(--rl);cursor:pointer}
+.trn-close-hint{font-size:.7rem;color:var(--mid);text-align:center;margin-top:6px}
+.trn-comp-card{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);margin-bottom:8px;overflow:hidden}
+.trn-comp-head{display:flex;align-items:center;padding:11px 14px;gap:10px;cursor:pointer}
+.trn-comp-num{width:24px;height:24px;border-radius:50%;background:var(--indigog);color:#1e3a5f;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trn-comp-desc{flex:1;font-size:.85rem;font-weight:700;color:var(--text)}
+.trn-comp-dur{font-size:.8rem;font-weight:800;color:var(--green)}
+.trn-comp-chev{font-size:.65rem;color:var(--dim);transition:transform .2s}
+.trn-comp-card.open .trn-comp-chev{transform:rotate(180deg)}
+.trn-comp-body{display:none;border-top:1.5px solid var(--border);padding:10px 14px;background:#f8f9fc;font-size:.78rem}
+.trn-comp-card.open .trn-comp-body{display:block}
+.trn-comp-times{font-weight:600;color:var(--text);margin-bottom:4px}
+.trn-comp-nota{color:var(--mid);font-style:italic;margin-top:4px}
+.trn-comp-edit{font-size:.7rem;font-weight:700;color:#1e3a5f;background:var(--indigog);border:1.5px solid #1e3a5f;border-radius:8px;padding:4px 10px;cursor:pointer;margin-top:8px;display:inline-block}
+.trn-hist-card{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);margin-bottom:8px;padding:12px 14px;cursor:pointer}
+.trn-hist-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.trn-hist-date{font-size:.82rem;font-weight:700;color:var(--text)}
+.trn-hist-dur{font-size:.85rem;font-weight:800;color:#1e3a5f}
+.trn-hist-meta{font-size:.72rem;color:var(--mid)}
+.trn-hist-chev{font-size:.65rem;color:var(--dim);transition:transform .2s;margin-left:4px}
+.trn-hist-card.open .trn-hist-chev{transform:rotate(180deg)}
+.trn-hist-jobs{display:none;margin-top:8px;border-top:1.5px solid var(--border);padding-top:8px}
+.trn-hist-card.open .trn-hist-jobs{display:block}
+.trn-hist-job-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.trn-hist-job-row:last-child{border-bottom:none}
+.trn-hist-job-desc{flex:1;font-weight:600;color:var(--text)}
+.trn-hist-job-dur{font-weight:700;color:#1e3a5f;font-size:.75rem;white-space:nowrap}
+.trn-hist-job-edit{font-size:.65rem;font-weight:700;color:var(--mid);background:#f1f3f8;border:1.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0}
+.trn-hist-job-edit:active{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.trn-res-stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.trn-res-s{background:var(--indigog);border-radius:10px;padding:10px;text-align:center}
+.trn-res-s-lbl{font-size:.6rem;font-weight:700;color:#1e3a5f;text-transform:uppercase;margin-bottom:3px}
+.trn-res-s-val{font-size:1rem;font-weight:800;color:var(--text)}
+.trn-res-job{border-bottom:1.5px solid var(--border);padding:8px 0;font-size:.8rem}
+.trn-res-job:last-child{border-bottom:none}
+.trn-res-job-desc{font-weight:700;color:var(--text);margin-bottom:2px}
+.trn-res-job-meta{color:var(--mid);font-size:.72rem}
+/* TAREAS */
+.trk-nav{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.trk-nav button{font-family:var(--sans);font-size:.75rem;font-weight:700;padding:9px 12px;border-radius:var(--r);border:2px solid var(--border);background:var(--surface);color:var(--mid);cursor:pointer;white-space:nowrap}
+.trk-nav button:active{border-color:#1e3a5f;color:#1e3a5f;background:var(--indigog)}
+#trkAyerBtn{background:var(--indigog);border-color:#1e3a5f;color:#1e3a5f}
+.trk-mes{flex:1;text-align:center;font-size:.95rem;font-weight:800;color:var(--text)}
+.trk-task-card{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);margin-bottom:8px;overflow:hidden}
+.trk-task-head{display:flex;align-items:center;padding:12px 14px;gap:10px;cursor:pointer}
+.trk-rank{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#2e5f8a);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trk-task-name{flex:1;font-size:.88rem;font-weight:700;color:var(--text)}
+.trk-task-dur{font-size:.88rem;font-weight:800;color:#1e3a5f;white-space:nowrap}
+.trk-task-chev{font-size:.65rem;color:var(--dim);transition:transform .2s}
+.trk-task-card.open .trk-task-chev{transform:rotate(180deg)}
+.trk-bar{height:5px;background:var(--indigog);border-radius:3px;overflow:hidden;margin:0 14px 12px}
+.trk-bar-fill{height:100%;background:linear-gradient(90deg,#1e3a5f,#2e5f8a);border-radius:3px}
+.trk-task-body{display:none;border-top:1.5px solid var(--border);background:#f8f9fc;padding:10px 14px}
+.trk-task-card.open .trk-task-body{display:block}
+.trk-task-occ{font-size:.72rem;font-weight:600;color:var(--mid);margin-bottom:6px}
+.trk-dia{display:flex;justify-content:space-between;font-size:.78rem;padding:5px 0;border-bottom:1px solid var(--border)}
+.trk-dia:last-child{border-bottom:none}
+.trk-dia-f{font-weight:600;color:var(--mid)}
+.trk-dia-d{font-weight:700;color:#1e3a5f}
+.trk-empty{text-align:center;padding:40px 20px;color:var(--dim);font-size:.85rem}
+.tf-mbtn.danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
 </style>
 </head>
 <body>
@@ -323,6 +409,8 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
     <button class="ntab active" data-tab="calendar">📅 Día</button>
     <button class="ntab" data-tab="stats">📊 Semana</button>
     <button class="ntab" data-tab="reports">📄 Informe</button>
+    <button class="ntab" data-tab="turno">🔧 Turno</button>
+    <button class="ntab" data-tab="tareas">📋 Tareas</button>
   </div>
 
   <!-- PANE CALENDAR -->
@@ -351,8 +439,8 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
           <div class="field"><label>Pausa min</label><input type="number" id="mananaPausa" min="0" step="5" value="0"></div>
         </div>
         <div class="now-row">
-          <button class="nbtn in" id="mananaEntradaAhora">⏺ Entrada ya</button>
-          <button class="nbtn out" id="mananaSalidaAhora">⏹ Salida ya</button>
+          <button class="nbtn in" id="mananaEntradaAhora" onclick="ahora('mananaEntrada',this);trnEntrada();">⏺ Entrada ya</button>
+          <button class="nbtn out" id="mananaSalidaAhora" onclick="ahora('mananaSalida',this);trnSalida();">⏹ Salida ya</button>
         </div>
       </div>
 
@@ -363,8 +451,8 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
           <div class="field"><label>Pausa min</label><input type="number" id="tardePausa" min="0" step="5" value="0"></div>
         </div>
         <div class="now-row">
-          <button class="nbtn in" id="tardeEntradaAhora">⏺ Entrada ya</button>
-          <button class="nbtn out" id="tardeSalidaAhora">⏹ Salida ya</button>
+          <button class="nbtn in" id="tardeEntradaAhora" onclick="ahora('tardeEntrada',this);trnEntrada();">⏺ Entrada ya</button>
+          <button class="nbtn out" id="tardeSalidaAhora" onclick="ahora('tardeSalida',this);trnSalida();">⏹ Salida ya</button>
         </div>
       </div>
 
@@ -492,9 +580,73 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 
   </div>
 
+
+  <!-- TURNO -->
+  <div class="pane" id="turnoPane">
+    <div id="trn-idle">
+      <div class="trn-hero">
+        <div class="trn-hero-ico">🔧</div>
+        <div class="trn-hero-title">Sin turno activo</div>
+        <div class="trn-hero-sub">Pulsa <strong>⏺ Entrada ya</strong> en la pestaña Día para iniciar el turno</div>
+      </div>
+      <div class="section-title" style="margin-top:4px">Últimos turnos</div>
+      <div id="trnHistory"></div>
+    </div>
+    <div id="trn-active" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-accent green"></div>
+        <div class="trn-header-grid">
+          <div><div class="trn-lbl">Iniciado</div><div class="trn-val" id="trnInicioLabel">--:--</div></div>
+          <div class="trn-center"><div class="trn-lbl">Duración</div><div class="trn-cron" id="trnCronometro">00:00:00</div></div>
+          <div class="trn-right"><div class="trn-lbl">Trabajos</div><div class="trn-val" id="trnNumTrabajos">0</div></div>
+        </div>
+      </div>
+      <div id="trnEnCurso" style="display:none">
+        <div class="section-title">En curso</div>
+        <div class="trn-job-card" style="margin-bottom:12px">
+          <div class="card-accent" style="background:linear-gradient(90deg,var(--green),#06b6d4)"></div>
+          <div class="trn-job-active-body">
+            <div class="trn-jab-top"><span class="trn-pulse"></span><span class="trn-jab-desc" id="trnJobDesc">—</span></div>
+            <div class="trn-jab-meta"><span id="trnJobInicio">--:--</span><span class="trn-job-timer" id="trnJobTimer">00:00</span></div>
+          </div>
+          <div class="trn-job-actions"><button class="trn-fin-btn" id="trnFinBtn">⏹ Finalizar trabajo</button></div>
+        </div>
+      </div>
+      <button class="trn-nuevo-btn" id="trnNuevoBtn" style="display:none">＋ Nuevo trabajo</button>
+      <div id="trnListaWrap" style="display:none">
+        <div class="section-title" style="margin-top:12px">Completados</div>
+        <div id="trnLista"></div>
+      </div>
+      <div style="margin-top:14px;padding-bottom:4px">
+        <button class="trn-close-btn" id="trnCloseBtn">🔒 Cerrar turno manualmente</button>
+        <div class="trn-close-hint">Se cierra automáticamente al pulsar ⏹ Salida ya en la pestaña Día</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAREAS -->
+  <div class="pane" id="tareasPane">
+    <div class="trk-nav">
+      <button id="trkAyerBtn">📅 Ayer</button>
+      <button id="trkPrevMesBtn">◀</button>
+      <div class="trk-mes" id="trkMesLabel">—</div>
+      <button id="trkNextMesBtn">▶</button>
+    </div>
+    <div class="card" id="trkHero" style="display:none;margin-bottom:12px">
+      <div class="card-accent" style="background:linear-gradient(90deg,#1e3a5f,#2e5f8a)"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:14px 16px;gap:8px">
+        <div><div style="font-size:.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;margin-bottom:3px">Turnos</div><div style="font-size:1.4rem;font-weight:800" id="trkNumTurnos">—</div></div>
+        <div style="text-align:center"><div style="font-size:.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;margin-bottom:3px">Tareas</div><div style="font-size:1.4rem;font-weight:800" id="trkNumTareas">—</div></div>
+        <div style="text-align:right"><div style="font-size:.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;margin-bottom:3px">Tiempo</div><div style="font-size:1.4rem;font-weight:800;color:#1e3a5f" id="trkTotalTiempo">—</div></div>
+      </div>
+    </div>
+    <div id="trkLista"></div>
+  </div>
+
 </div>
 
 <script>
+
 
 // ── SERVICE WORKER ──
 if ('serviceWorker' in navigator) {
@@ -508,6 +660,10 @@ if ('serviceWorker' in navigator) {
 // ── APP LOGIC ──
 let empresas=['Mi trabajo'],empresaActiva='Mi trabajo',datosEmpresas={},workData={};
 let globalRate=15,minHoursPerDay=7.5,currentDate=new Date(),selectedDateKey=null;
+
+// ── TURNO vars (declaradas aquí para que estén disponibles en el bloque try de inicio) ──
+let trnTurno=null,trnJobActual=null,trnCronInt=null,trnJobInt=null,trkDate=new Date();
+const TRN_H='tf_turnos',TRN_P='tf_turno_pending';
 const $=id=>document.getElementById(id);
 
 function fdk(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -846,12 +1002,13 @@ function importarDatos(file){
 }
 
 // Eventos
+try{
 $('prevMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()-1);renderCal();calcStats()};
 $('nextMonthBtn').onclick=()=>{currentDate.setMonth(currentDate.getMonth()+1);renderCal();calcStats()};
-$('mananaEntradaAhora').onclick=function(){ahora('mananaEntrada',this)};
-$('mananaSalidaAhora').onclick=function(){ahora('mananaSalida',this)};
-$('tardeEntradaAhora').onclick=function(){ahora('tardeEntrada',this)};
-$('tardeSalidaAhora').onclick=function(){ahora('tardeSalida',this)};
+$('mananaEntradaAhora').onclick=function(){ahora('mananaEntrada',this);trnEntrada();};
+$('mananaSalidaAhora').onclick=function(){ahora('mananaSalida',this);trnSalida();};
+$('tardeEntradaAhora').onclick=function(){ahora('tardeEntrada',this);trnEntrada();};
+$('tardeSalidaAhora').onclick=function(){ahora('tardeSalida',this);trnSalida();};
 $('saveDayBtn').onclick=guardarDia;
 $('clearDayBtn').onclick=limpiar;
 $('updateConfigBtn').onclick=()=>{globalRate=parseFloat($('globalHourlyRate').value)||15;minHoursPerDay=parseFloat($('minDailyHours').value)||0;save();renderCal();preview();calcStats()};
@@ -935,9 +1092,13 @@ document.querySelectorAll('.ntab').forEach(btn=>{
     document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));$(`${btn.dataset.tab}Pane`).classList.add('active');
     if(btn.dataset.tab==='stats')calcStats();
     if(btn.dataset.tab==='calendar')renderCal();
+    if(btn.dataset.tab==='turno')trnRender();
+    if(btn.dataset.tab==='tareas'){trkDate=new Date();trkRender();}
   });
 });
 load();if(!selectedDateKey)selectedDateKey=today();loadDay(selectedDateKey);
+trnLoadPending();trnRender();
+}catch(e){alert('ERROR AL INICIAR: '+e.message);}
 
 // ── RECORDATORIO DE BACKUP ──
 (function(){
@@ -970,6 +1131,452 @@ load();if(!selectedDateKey)selectedDateKey=today();loadDay(selectedDateKey);
     }, 1500);
   }
 })();
+
+
+// ═══════════════════════════
+// TURNO
+// ═══════════════════════════
+
+function trnH(ts){const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function trnD(ms){if(!ms||ms<0)return '0m';const m=Math.floor(ms/60000),h=Math.floor(m/60);return h>0?h+'h '+String(m%60).padStart(2,'0')+'m':m+'m';}
+function trnCron(ms){const s=Math.floor(ms/1000)%60,m=Math.floor(ms/60000)%60,h=Math.floor(ms/3600000);return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function trnTimer(ms){if(!ms||ms<0)return '00:00';const s=Math.floor(ms/1000)%60,m=Math.floor(ms/60000);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function trnFecha(ts){return new Date(ts).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});}
+
+function trnLoadHist(){try{return JSON.parse(localStorage.getItem(TRN_H)||'[]');}catch(e){return [];}}
+function trnSaveHist(h){localStorage.setItem(TRN_H,JSON.stringify(h));}
+function trnSavePending(){localStorage.setItem(TRN_P,JSON.stringify({turno:trnTurno,job:trnJobActual}));}
+function trnLoadPending(){
+  try{
+    const s=localStorage.getItem(TRN_P);
+    if(!s)return;
+    const o=JSON.parse(s);
+    if(o&&o.turno){trnTurno=o.turno;trnJobActual=o.job||null;}
+  }catch(e){localStorage.removeItem(TRN_P);}
+}
+
+// Navegar a la pestaña Turno y renderizar
+function trnIrATab(){
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.ntab[data-tab="turno"]').classList.add('active');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  $('turnoPane').classList.add('active');
+  trnRender();
+}
+
+// Al pulsar Entrada ya
+function trnEntrada(){
+  // Si ya hay turno con trabajo activo, ir directo a la pestaña
+  if(trnTurno && trnJobActual){
+    trnIrATab();
+    return;
+  }
+  // Crear turno si no existe aún
+  if(!trnTurno){
+    trnTurno={inicio:Date.now(),trabajos:[]};
+    trnSavePending();
+  }
+  // Pedir nombre del trabajo
+  tfPrompt({
+    icon:'🔧',
+    title: trnTurno.trabajos.length===0 ? '¿Con qué empiezas hoy?' : '¿Siguiente trabajo?',
+    sub: trnTurno.trabajos.length===0 ? 'Turno iniciado' : trnTurno.trabajos.length+' trabajos completados',
+    placeholder:'Describe el trabajo...',
+    confirmTxt:'▶ Empezar',
+    onConfirm:function(desc){
+      if(!desc||!desc.trim()){
+        // Cancelado: si el turno es nuevo y vacío, eliminarlo
+        if(trnTurno && trnTurno.trabajos.length===0){
+          trnTurno=null;
+          localStorage.removeItem(TRN_P);
+        }
+        return;
+      }
+      trnJobActual={desc:desc.trim(),inicio:Date.now()};
+      trnSavePending();
+      trnIrATab();
+    }
+  });
+}
+
+// Al pulsar Salida ya
+function trnSalida(){
+  if(!trnTurno)return;
+  if(trnJobActual){
+    trnTurno.trabajos.push({desc:trnJobActual.desc,inicio:trnJobActual.inicio,fin:Date.now(),notas:''});
+    trnJobActual=null;
+    clearInterval(trnJobInt); trnJobInt=null;
+    trnSavePending();
+  }
+  if(!trnTurno.trabajos.length){
+    clearInterval(trnCronInt); trnCronInt=null;
+    trnTurno=null;
+    localStorage.removeItem(TRN_P);
+    trnRender();
+    return;
+  }
+  trnMostrarResumen(Date.now());
+}
+
+// Render principal
+function trnRender(){
+  clearInterval(trnCronInt); trnCronInt=null;
+  clearInterval(trnJobInt);  trnJobInt=null;
+
+  const idle=$('trn-idle'), active=$('trn-active');
+  if(!trnTurno){
+    idle.style.display='';
+    active.style.display='none';
+    trnRenderHist();
+    return;
+  }
+  idle.style.display='none';
+  active.style.display='';
+
+  $('trnInicioLabel').textContent=trnH(trnTurno.inicio);
+  $('trnNumTrabajos').textContent=trnTurno.trabajos.length;
+
+  const updateCron=()=>$('trnCronometro').textContent=trnCron(Date.now()-trnTurno.inicio);
+  updateCron();
+  trnCronInt=setInterval(updateCron,1000);
+
+  if(trnJobActual){
+    $('trnEnCurso').style.display='';
+    $('trnNuevoBtn').style.display='none';
+    $('trnJobDesc').textContent=trnJobActual.desc;
+    $('trnJobInicio').textContent='Inicio: '+trnH(trnJobActual.inicio);
+    const updateJob=()=>$('trnJobTimer').textContent=trnTimer(Date.now()-trnJobActual.inicio);
+    updateJob();
+    trnJobInt=setInterval(updateJob,1000);
+  }else{
+    $('trnEnCurso').style.display='none';
+    $('trnNuevoBtn').style.display='';
+  }
+  trnRenderLista();
+}
+
+function trnRenderLista(){
+  const wrap=$('trnListaWrap'),lista=$('trnLista');
+  if(!trnTurno||!trnTurno.trabajos.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  lista.innerHTML='';
+  trnTurno.trabajos.forEach((j,i)=>{
+    const dur=(j.fin||Date.now())-j.inicio;
+    const card=document.createElement('div');
+    card.className='trn-comp-card';
+    card.innerHTML='<div class="trn-comp-head"><div class="trn-comp-num">'+(i+1)+'</div><div class="trn-comp-desc">'+j.desc+'</div><div class="trn-comp-dur">'+trnD(dur)+'</div><span class="trn-comp-chev">▾</span></div><div class="trn-comp-body"><div class="trn-comp-times">⏱ '+trnH(j.inicio)+' → '+trnH(j.fin||Date.now())+'</div>'+(j.notas?'<div class="trn-comp-nota">📝 '+j.notas+'</div>':'')+'<button class="trn-comp-edit">✏️ Editar</button></div>';
+    card.querySelector('.trn-comp-head').addEventListener('click',()=>card.classList.toggle('open'));
+    card.querySelector('.trn-comp-edit').addEventListener('click',()=>trnEditarJob(i,false));
+    lista.appendChild(card);
+  });
+}
+
+function trnRenderHist(){
+  const hist=trnLoadHist(), el=$('trnHistory');
+  if(!hist.length){el.innerHTML='<div class="rpt-empty" style="padding:20px 0">No hay turnos guardados aún</div>';return;}
+  el.innerHTML='';
+  [...hist].reverse().slice(0,10).forEach((t,ri)=>{
+    const oi=hist.length-1-ri;
+    const card=document.createElement('div');
+    card.className='trn-hist-card';
+    const jobs=t.trabajos.map((j,ji)=>{
+      const jFin=j.fin||(t.fin||j.inicio);
+      return '<div class="trn-hist-job-row"><span class="trn-hist-job-desc">'+j.desc+'</span><span class="trn-hist-job-dur">'+trnD(jFin-j.inicio)+'</span><button class="trn-hist-job-edit" data-oi="'+oi+'" data-ji="'+ji+'">✏️</button></div>';
+    }).join('');
+    const tFin=t.fin||(t.trabajos.length?t.trabajos[t.trabajos.length-1].fin||t.inicio:t.inicio);
+    card.innerHTML='<div class="trn-hist-head"><div class="trn-hist-date">📅 '+trnFecha(t.inicio)+' <span class="trn-hist-chev">▾</span></div><div class="trn-hist-dur">'+trnD(tFin-t.inicio)+'</div></div><div class="trn-hist-meta">'+trnH(t.inicio)+' → '+trnH(tFin)+' · '+t.trabajos.length+' trabajo'+(t.trabajos.length!==1?'s':'')+'</div><div class="trn-hist-jobs">'+jobs+'</div>';
+    card.querySelector('.trn-hist-head').addEventListener('click',()=>card.classList.toggle('open'));
+    card.querySelectorAll('.trn-hist-job-edit').forEach(btn=>btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      trnEditarJobHist(+btn.dataset.oi,+btn.dataset.ji);
+    }));
+    el.appendChild(card);
+  });
+}
+
+// Finalizar trabajo actual
+$('trnFinBtn').onclick=()=>{
+  if(!trnJobActual)return;
+  const snap={desc:trnJobActual.desc,inicio:trnJobActual.inicio,fin:Date.now()};
+  tfPrompt({
+    icon:'✅',
+    title:'Finalizar: '+snap.desc,
+    sub:trnH(snap.inicio)+' → '+trnH(snap.fin)+' · '+trnD(snap.fin-snap.inicio),
+    placeholder:'Notas opcionales...',
+    confirmTxt:'✅ Guardar',
+    onConfirm:notas=>{
+      trnTurno.trabajos.push({desc:snap.desc,inicio:snap.inicio,fin:snap.fin,notas:(notas||'').trim()});
+      trnJobActual=null;
+      clearInterval(trnJobInt); trnJobInt=null;
+      trnSavePending();
+      trnRender();
+      tfPrompt({
+        icon:'🔧',
+        title:'¿Siguiente trabajo?',
+        sub:trnTurno.trabajos.length+' completados',
+        placeholder:'Describe el trabajo...',
+        confirmTxt:'▶ Empezar',
+        onConfirm:desc=>{
+          if(!desc||!desc.trim())return;
+          trnJobActual={desc:desc.trim(),inicio:Date.now()};
+          trnSavePending();
+          trnRender();
+        }
+      });
+    }
+  });
+};
+
+// Nuevo trabajo (sin trabajo activo)
+$('trnNuevoBtn').onclick=()=>{
+  tfPrompt({
+    icon:'🔧',
+    title:'¿Siguiente trabajo?',
+    sub:trnTurno.trabajos.length+' completados',
+    placeholder:'Describe el trabajo...',
+    confirmTxt:'▶ Empezar',
+    onConfirm:desc=>{
+      if(!desc||!desc.trim())return;
+      trnJobActual={desc:desc.trim(),inicio:Date.now()};
+      trnSavePending();
+      trnRender();
+    }
+  });
+};
+
+// Cerrar turno manualmente
+$('trnCloseBtn').onclick=()=>{
+  if(trnJobActual){
+    tfConfirm({
+      icon:'⚠️',
+      title:'Trabajo en curso',
+      sub:'"'+trnJobActual.desc+'" sigue activo. ¿Finalizarlo y cerrar el turno?',
+      confirmTxt:'Cerrar turno',
+      confirmCls:'confirm',
+      onConfirm:()=>{
+        trnTurno.trabajos.push({desc:trnJobActual.desc,inicio:trnJobActual.inicio,fin:Date.now(),notas:''});
+        trnJobActual=null;
+        clearInterval(trnJobInt); trnJobInt=null;
+        trnSavePending();
+        trnMostrarResumen();
+      }
+    });
+    return;
+  }
+  trnMostrarResumen();
+};
+
+// Mostrar resumen y guardar en historial
+function trnMostrarResumen(finTs){
+  const fin=finTs||Date.now();
+  const dur=fin-trnTurno.inicio;
+  const durT=trnTurno.trabajos.reduce((a,j)=>a+((j.fin||fin)-j.inicio),0);
+  let resumen='⏱ '+trnH(trnTurno.inicio)+' → '+trnH(fin)+' ('+trnD(dur)+')\n';
+  resumen+='✅ '+trnTurno.trabajos.length+' trabajo'+(trnTurno.trabajos.length!==1?'s':'')+' · Productivo: '+trnD(durT)+'\n\n';
+  trnTurno.trabajos.forEach((j,i)=>{
+    const jFin=j.fin||fin;
+    resumen+=(i+1)+'. '+j.desc+' ('+trnD(jFin-j.inicio)+')\n   '+trnH(j.inicio)+' → '+trnH(jFin)+(j.notas?'\n   📝 '+j.notas:'')+'\n';
+  });
+  window._trnDatos={turno:{...trnTurno},fin,resumen};
+  const hist=trnLoadHist();
+  hist.push({...trnTurno,fin});
+  trnSaveHist(hist);
+  clearInterval(trnCronInt); trnCronInt=null;
+  clearInterval(trnJobInt);  trnJobInt=null;
+  trnTurno=null; trnJobActual=null;
+  localStorage.removeItem(TRN_P);
+  trnRender();
+  tfConfirm({
+    icon:'📋',
+    title:'Turno cerrado',
+    sub:resumen,
+    confirmTxt:'📱 WhatsApp',
+    confirmCls:'confirm',
+    onConfirm:()=>{
+      window.open('https://wa.me/?text='+encodeURIComponent('🔧 *Resumen de turno*\n📅 '+trnFecha(window._trnDatos.fin)+'\n'+window._trnDatos.resumen),'_blank');
+    }
+  });
+}
+
+// Editar trabajo — modal completo con desc, inicio, fin y notas
+function trnEditarJob(idx,esHist,histOi){
+  const arr=esHist?trnLoadHist()[histOi].trabajos:trnTurno.trabajos;
+  const j=arr[idx];
+
+  // Construir modal personalizado sobre el overlay existente
+  const overlay=$('tfOverlay');
+  const modal=overlay.querySelector('.tf-modal');
+
+  const toTime=ts=>{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+  const fromTime=(base,timeStr)=>{const[h,m]=timeStr.split(':').map(Number);const d=new Date(base);d.setHours(h,m,0,0);return d.getTime();};
+
+  modal.innerHTML=`
+    <div class="tf-modal-icon">✏️</div>
+    <div class="tf-modal-title">Editar trabajo</div>
+    <div class="tf-modal-sub" style="margin-bottom:14px">Modifica los datos del trabajo</div>
+    <input class="tf-modal-input" id="_editDesc" type="text" placeholder="Descripción..." value="${j.desc.replace(/"/g,'&quot;')}" style="margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <div style="font-size:.63rem;font-weight:700;color:var(--dim);letter-spacing:.3px;text-transform:uppercase;margin-bottom:4px">Inicio</div>
+        <input class="tf-modal-input" id="_editInicio" type="time" value="${toTime(j.inicio)}" style="margin-bottom:0">
+      </div>
+      <div>
+        <div style="font-size:.63rem;font-weight:700;color:var(--dim);letter-spacing:.3px;text-transform:uppercase;margin-bottom:4px">Fin</div>
+        <input class="tf-modal-input" id="_editFin" type="time" value="${j.fin?toTime(j.fin):''}" style="margin-bottom:0">
+      </div>
+    </div>
+    <input class="tf-modal-input" id="_editNotas" type="text" placeholder="Notas (opcional)..." value="${(j.notas||'').replace(/"/g,'&quot;')}" style="margin-bottom:16px">
+    <div class="tf-modal-btns" style="grid-template-columns:1fr 1fr 1fr">
+      <button class="tf-mbtn danger" id="_editDel">🗑 Borrar</button>
+      <button class="tf-mbtn cancel" id="_editCancel">Cancelar</button>
+      <button class="tf-mbtn confirm" id="_editSave">💾 Guardar</button>
+    </div>`;
+
+  overlay.classList.add('show');
+  const inp=document.getElementById('_editDesc');
+  setTimeout(()=>inp&&inp.focus(),320);
+
+  const cerrar=()=>{
+    overlay.classList.remove('show');
+    // Restaurar modal original
+    modal.innerHTML=`
+      <div class="tf-modal-icon" id="tfModalIcon">💾</div>
+      <div class="tf-modal-title" id="tfModalTitle">Título</div>
+      <div class="tf-modal-sub" id="tfModalSub">Subtítulo</div>
+      <input class="tf-modal-input" id="tfModalInput" type="text" style="display:none">
+      <div class="tf-modal-btns" id="tfModalBtns">
+        <button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button>
+        <button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button>
+      </div>`;
+    // Re-enlazar listeners del modal base
+    $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()},{once:true});
+    $('tfBtnCancel').onclick=_tfHide;
+    $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
+    $('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
+  };
+
+  document.getElementById('_editCancel').onclick=cerrar;
+  overlay.onclick=e=>{if(e.target===overlay)cerrar();};
+
+  document.getElementById('_editDel').onclick=()=>{
+    cerrar();
+    trnBorrarJob(idx,esHist,histOi);
+  };
+
+  document.getElementById('_editSave').onclick=()=>{
+    const desc=document.getElementById('_editDesc').value.trim();
+    const inicioStr=document.getElementById('_editInicio').value;
+    const finStr=document.getElementById('_editFin').value;
+    const notas=document.getElementById('_editNotas').value.trim();
+    if(!desc){trnBorrarJob(idx,esHist,histOi);cerrar();return;}
+    const nuevoInicio=inicioStr?fromTime(j.inicio,inicioStr):j.inicio;
+    const nuevoFin=finStr?fromTime(j.fin||j.inicio,finStr):j.fin;
+    const jobEditado={...j,desc,inicio:nuevoInicio,fin:nuevoFin||j.fin,notas};
+    if(esHist){
+      const h=trnLoadHist();h[histOi].trabajos[idx]=jobEditado;trnSaveHist(h);cerrar();trnRenderHist();
+    }else{
+      trnTurno.trabajos[idx]=jobEditado;trnSavePending();cerrar();trnRender();
+    }
+  };
+}
+
+function trnBorrarJob(idx,esHist,histOi){
+  tfConfirm({
+    icon:'🗑️',
+    title:'Eliminar trabajo',
+    sub:'¿Eliminar este trabajo?',
+    confirmTxt:'Eliminar',
+    confirmCls:'danger',
+    onConfirm:()=>{
+      if(esHist){const h=trnLoadHist();h[histOi].trabajos.splice(idx,1);trnSaveHist(h);trnRenderHist();}
+      else{trnTurno.trabajos.splice(idx,1);trnSavePending();trnRender();}
+    }
+  });
+}
+function trnEditarJobHist(oi,ji){trnEditarJob(ji,true,oi);}
+
+// ═══════════════════════════
+// TAREAS
+// ═══════════════════════════
+function trkD(ms){const m=Math.floor(ms/60000),h=Math.floor(m/60);return h>0?h+'h '+String(m%60).padStart(2,'0')+'m':m+'m';}
+function trkFecha(ts){return new Date(ts).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});}
+
+// Normaliza texto para agrupar (sin tildes, minúsculas)
+function trkNorm(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+
+function trkRender(filtro){
+  const MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const hist=trnLoadHist();
+  let trabajos=[];
+  if(filtro){
+    $('trkMesLabel').textContent='📅 '+trkFecha(filtro.getTime());
+    $('trkHero').style.display='none';
+    const ds=filtro.toISOString().slice(0,10);
+    hist.forEach((t,oi)=>{if(new Date(t.inicio).toISOString().slice(0,10)===ds)t.trabajos.forEach((j,ji)=>trabajos.push({...j,tI:t.inicio,oi,ji}));});
+  }else{
+    const yr=trkDate.getFullYear(),mo=trkDate.getMonth();
+    $('trkMesLabel').textContent=MN[mo]+' '+yr;
+    hist.forEach((t,oi)=>{const d=new Date(t.inicio);if(d.getFullYear()===yr&&d.getMonth()===mo)t.trabajos.forEach((j,ji)=>trabajos.push({...j,tI:t.inicio,oi,ji}));});
+  }
+  const lista=$('trkLista');
+  if(!trabajos.length){$('trkHero').style.display='none';lista.innerHTML='<div class="trk-empty">No hay tareas en este período</div>';return;}
+  const grupos={};
+  trabajos.forEach(j=>{
+    const k=trkNorm(j.desc);
+    if(!grupos[k])grupos[k]={desc:j.desc,total:0,ocs:[]};
+    const d=(j.fin||j.inicio)-j.inicio;
+    grupos[k].total+=d;
+    grupos[k].ocs.push({fecha:j.tI,dur:d,notas:j.notas,oi:j.oi,ji:j.ji});
+  });
+  const sorted=Object.values(grupos).sort((a,b)=>b.total-a.total),maxMs=sorted[0].total;
+  if(!filtro){
+    $('trkHero').style.display='';
+    $('trkNumTurnos').textContent=new Set(trabajos.map(j=>new Date(j.tI).toISOString().slice(0,10))).size;
+    $('trkNumTareas').textContent=trabajos.length;
+    $('trkTotalTiempo').textContent=trkD(sorted.reduce((a,b)=>a+b.total,0));
+  }
+  lista.innerHTML='';
+  sorted.forEach((g,i)=>{
+    const pct=Math.round(g.total/maxMs*100);
+    const card=document.createElement('div');card.className='trk-task-card';
+    const body=document.createElement('div');body.className='trk-task-body';
+    const occ=document.createElement('div');occ.className='trk-task-occ';
+    occ.textContent=g.ocs.length+' vez'+(g.ocs.length!==1?'es':'')+' · '+Math.round(g.total/g.ocs.length/60000)+'m media';
+    body.appendChild(occ);
+    g.ocs.forEach(o=>{
+      const row=document.createElement('div');
+      row.className='trk-dia';
+      row.style.cssText='display:flex;align-items:center;gap:6px';
+      const fecha=document.createElement('span');fecha.className='trk-dia-f';fecha.textContent=trkFecha(o.fecha);
+      const info=document.createElement('span');info.className='trk-dia-d';info.style.flex='1';
+      info.innerHTML=trkD(o.dur)+(o.notas?' · <em style="font-weight:500;color:var(--dim)">'+o.notas+'</em>':'');
+      const editBtn=document.createElement('button');
+      editBtn.textContent='✏️';
+      editBtn.style.cssText='background:none;border:none;font-size:.85rem;cursor:pointer;padding:2px 6px;border-radius:6px;color:var(--mid);flex-shrink:0';
+      editBtn.title='Editar';
+      editBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const _filtroActual=filtro;
+        // Parchear trnRenderHist para que también actualice trkRender tras editar
+        const _origSaveHist=trnSaveHist;
+        trnSaveHist=function(h){_origSaveHist(h);trnSaveHist=_origSaveHist;setTimeout(()=>trkRender(_filtroActual),50);};
+        trnEditarJob(o.ji,true,o.oi);
+      });
+      row.appendChild(fecha);row.appendChild(info);row.appendChild(editBtn);
+      body.appendChild(row);
+    });
+    card.innerHTML=
+      '<div class="trk-task-head"><div class="trk-rank">'+(i+1)+'</div><div class="trk-task-name">'+g.desc+'</div><div class="trk-task-dur">'+trkD(g.total)+'</div><span class="trk-task-chev">▾</span></div>'+
+      '<div class="trk-bar"><div class="trk-bar-fill" style="width:'+pct+'%"></div></div>';
+    card.appendChild(body);
+    card.querySelector('.trk-task-head').addEventListener('click',()=>card.classList.toggle('open'));
+    lista.appendChild(card);
+  });
+}
+$('trkAyerBtn').onclick=()=>{const a=new Date();a.setDate(a.getDate()-1);trkRender(a);};
+$('trkPrevMesBtn').onclick=()=>{trkDate.setMonth(trkDate.getMonth()-1);trkRender();};
+$('trkNextMesBtn').onclick=()=>{trkDate.setMonth(trkDate.getMonth()+1);trkRender();};
+
 </script>
 </body>
 </html>
