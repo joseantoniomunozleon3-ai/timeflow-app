@@ -1294,8 +1294,10 @@ function trnRenderHist(){
     }));
     card.querySelector('.trn-hist-reopen').addEventListener('click',e=>{
       e.stopPropagation();
+      const idxOi=oi; // capturar en closure
       const h=trnLoadHist();
-      const t2=h[+e.currentTarget.dataset.oi];
+      const t2=h[idxOi];
+      if(!t2)return;
       tfConfirm({
         icon:'🔓',
         title:'¿Reabrir este turno?',
@@ -1303,12 +1305,11 @@ function trnRenderHist(){
         confirmTxt:'Reabrir',
         confirmCls:'confirm',
         onConfirm:()=>{
-          // Eliminar del historial
-          h.splice(+e.currentTarget.dataset.oi,1);
-          trnSaveHist(h);
-          // Restaurar como turno pendiente (sin fin)
-          const {fin:_,...turnoSinFin}=t2;
-          trnTurno={...turnoSinFin};
+          const h2=trnLoadHist();
+          h2.splice(idxOi,1);
+          trnSaveHist(h2);
+          const t3={inicio:t2.inicio,trabajos:JSON.parse(JSON.stringify(t2.trabajos))};
+          trnTurno=t3;
           trnJobActual=null;
           trnSavePending();
           trnRender();
@@ -1402,31 +1403,42 @@ function trnMostrarResumen(finTs){
     const jFin=j.fin||fin;
     resumen+=(i+1)+'. '+j.desc+' ('+trnD(jFin-j.inicio)+')\n   '+trnH(j.inicio)+' → '+trnH(jFin)+(j.notas?'\n   📝 '+j.notas:'')+'\n';
   });
+  const turnoSnap={inicio:trnTurno.inicio,trabajos:JSON.parse(JSON.stringify(trnTurno.trabajos))};
 
-  // Guardar snapshot del turno para poder reabrirlo
-  const turnoSnap={...trnTurno, trabajos:[...trnTurno.trabajos]};
-
-  // Mostrar modal de confirmación ANTES de guardar definitivamente
-  const overlay=$('tfOverlay');
-  const modal=overlay.querySelector('.tf-modal');
-  modal.innerHTML=`
-    <div class="tf-modal-icon">📋</div>
-    <div class="tf-modal-title">Revisar turno</div>
-    <div class="tf-modal-sub" style="white-space:pre-line;text-align:left;font-size:.78rem;line-height:1.6;margin-bottom:18px">${resumen}</div>
-    <div class="tf-modal-btns" style="grid-template-columns:1fr 1fr">
-      <button class="tf-mbtn cancel" id="_trnAddWork">➕ Añadir trabajo</button>
-      <button class="tf-mbtn confirm" id="_trnConfirmClose">✅ Cerrar turno</button>
-    </div>`;
-  overlay.classList.add('show');
-
-  document.getElementById('_trnConfirmClose').onclick=()=>{
-    overlay.classList.remove('show');
-    // Restaurar modal original
-    modal.innerHTML=`<div class="tf-modal-icon" id="tfModalIcon">💾</div><div class="tf-modal-title" id="tfModalTitle">Título</div><div class="tf-modal-sub" id="tfModalSub">Subtítulo</div><input class="tf-modal-input" id="tfModalInput" type="text" style="display:none"><div class="tf-modal-btns" id="tfModalBtns"><button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button><button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button></div>`;
-    $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()},{once:true});
+  // Paso 1: preguntar si añadir trabajo o cerrar
+  _tfSetup({icon:'📋',title:'Revisar turno',sub:resumen,confirmTxt:'✅ Cerrar turno',confirmCls:'confirm',showInput:false});
+  // Reusar el botón cancel como "Añadir trabajo"
+  $('tfBtnCancel').textContent='➕ Añadir trabajo';
+  $('tfModalBtns').className='tf-modal-btns';
+  $('tfBtnCancel').style.display='';
+  $('tfBtnCancel').onclick=()=>{
+    // Restaurar cancel a su estado normal antes de cerrar
+    $('tfBtnCancel').textContent='Cancelar';
     $('tfBtnCancel').onclick=_tfHide;
-    $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
-    $('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
+    _tfHide();
+    // Reabrir turno y pedir nuevo trabajo
+    trnTurno=turnoSnap;
+    trnJobActual=null;
+    trnSavePending();
+    trnRender();
+    tfPrompt({
+      icon:'🔧',
+      title:'¿Qué trabajo añades?',
+      sub:turnoSnap.trabajos.length+' trabajos ya completados',
+      placeholder:'Describe el trabajo...',
+      confirmTxt:'▶ Empezar',
+      onConfirm:desc=>{
+        if(!desc||!desc.trim())return;
+        trnJobActual={desc:desc.trim(),inicio:Date.now()};
+        trnSavePending();
+        trnRender();
+      }
+    });
+  };
+  _tfCb=()=>{
+    // Restaurar cancel
+    $('tfBtnCancel').textContent='Cancelar';
+    $('tfBtnCancel').onclick=_tfHide;
     // Guardar en historial
     window._trnDatos={turno:turnoSnap,fin,resumen};
     const hist=trnLoadHist();
@@ -1448,35 +1460,7 @@ function trnMostrarResumen(finTs){
       }
     });
   };
-
-  document.getElementById('_trnAddWork').onclick=()=>{
-    overlay.classList.remove('show');
-    // Restaurar modal original
-    modal.innerHTML=`<div class="tf-modal-icon" id="tfModalIcon">💾</div><div class="tf-modal-title" id="tfModalTitle">Título</div><div class="tf-modal-sub" id="tfModalSub">Subtítulo</div><input class="tf-modal-input" id="tfModalInput" type="text" style="display:none"><div class="tf-modal-btns" id="tfModalBtns"><button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button><button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button></div>`;
-    $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()},{once:true});
-    $('tfBtnCancel').onclick=_tfHide;
-    $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
-    $('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
-    // Reabrir el turno con los trabajos que había
-    trnTurno=turnoSnap;
-    trnJobActual=null;
-    trnSavePending();
-    trnRender();
-    // Pedir nuevo trabajo
-    tfPrompt({
-      icon:'🔧',
-      title:'¿Qué trabajo añades?',
-      sub:turnoSnap.trabajos.length+' trabajos ya completados',
-      placeholder:'Describe el trabajo...',
-      confirmTxt:'▶ Empezar',
-      onConfirm:desc=>{
-        if(!desc||!desc.trim())return;
-        trnJobActual={desc:desc.trim(),inicio:Date.now()};
-        trnSavePending();
-        trnRender();
-      }
-    });
-  };
+  _tfShow();
 }
 
 // Editar trabajo — modal completo con desc, inicio, fin y notas
