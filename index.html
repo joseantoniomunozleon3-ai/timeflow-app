@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -1377,25 +1377,81 @@ function trnMostrarResumen(finTs){
     const jFin=j.fin||fin;
     resumen+=(i+1)+'. '+j.desc+' ('+trnD(jFin-j.inicio)+')\n   '+trnH(j.inicio)+' → '+trnH(jFin)+(j.notas?'\n   📝 '+j.notas:'')+'\n';
   });
-  window._trnDatos={turno:{...trnTurno},fin,resumen};
-  const hist=trnLoadHist();
-  hist.push({...trnTurno,fin});
-  trnSaveHist(hist);
-  clearInterval(trnCronInt); trnCronInt=null;
-  clearInterval(trnJobInt);  trnJobInt=null;
-  trnTurno=null; trnJobActual=null;
-  localStorage.removeItem(TRN_P);
-  trnRender();
-  tfConfirm({
-    icon:'📋',
-    title:'Turno cerrado',
-    sub:resumen,
-    confirmTxt:'📱 WhatsApp',
-    confirmCls:'confirm',
-    onConfirm:()=>{
-      window.open('https://wa.me/?text='+encodeURIComponent('🔧 *Resumen de turno*\n📅 '+trnFecha(window._trnDatos.fin)+'\n'+window._trnDatos.resumen),'_blank');
-    }
-  });
+
+  // Guardar snapshot del turno para poder reabrirlo
+  const turnoSnap={...trnTurno, trabajos:[...trnTurno.trabajos]};
+
+  // Mostrar modal de confirmación ANTES de guardar definitivamente
+  const overlay=$('tfOverlay');
+  const modal=overlay.querySelector('.tf-modal');
+  modal.innerHTML=`
+    <div class="tf-modal-icon">📋</div>
+    <div class="tf-modal-title">Revisar turno</div>
+    <div class="tf-modal-sub" style="white-space:pre-line;text-align:left;font-size:.78rem;line-height:1.6;margin-bottom:18px">${resumen}</div>
+    <div class="tf-modal-btns" style="grid-template-columns:1fr 1fr">
+      <button class="tf-mbtn cancel" id="_trnAddWork">➕ Añadir trabajo</button>
+      <button class="tf-mbtn confirm" id="_trnConfirmClose">✅ Cerrar turno</button>
+    </div>`;
+  overlay.classList.add('show');
+
+  document.getElementById('_trnConfirmClose').onclick=()=>{
+    overlay.classList.remove('show');
+    // Restaurar modal original
+    modal.innerHTML=`<div class="tf-modal-icon" id="tfModalIcon">💾</div><div class="tf-modal-title" id="tfModalTitle">Título</div><div class="tf-modal-sub" id="tfModalSub">Subtítulo</div><input class="tf-modal-input" id="tfModalInput" type="text" style="display:none"><div class="tf-modal-btns" id="tfModalBtns"><button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button><button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button></div>`;
+    $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()},{once:true});
+    $('tfBtnCancel').onclick=_tfHide;
+    $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
+    $('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
+    // Guardar en historial
+    window._trnDatos={turno:turnoSnap,fin,resumen};
+    const hist=trnLoadHist();
+    hist.push({...turnoSnap,fin});
+    trnSaveHist(hist);
+    clearInterval(trnCronInt); trnCronInt=null;
+    clearInterval(trnJobInt);  trnJobInt=null;
+    trnTurno=null; trnJobActual=null;
+    localStorage.removeItem(TRN_P);
+    trnRender();
+    tfConfirm({
+      icon:'✅',
+      title:'Turno guardado',
+      sub:resumen,
+      confirmTxt:'📱 WhatsApp',
+      confirmCls:'confirm',
+      onConfirm:()=>{
+        window.open('https://wa.me/?text='+encodeURIComponent('🔧 *Resumen de turno*\n📅 '+trnFecha(window._trnDatos.fin)+'\n'+window._trnDatos.resumen),'_blank');
+      }
+    });
+  };
+
+  document.getElementById('_trnAddWork').onclick=()=>{
+    overlay.classList.remove('show');
+    // Restaurar modal original
+    modal.innerHTML=`<div class="tf-modal-icon" id="tfModalIcon">💾</div><div class="tf-modal-title" id="tfModalTitle">Título</div><div class="tf-modal-sub" id="tfModalSub">Subtítulo</div><input class="tf-modal-input" id="tfModalInput" type="text" style="display:none"><div class="tf-modal-btns" id="tfModalBtns"><button class="tf-mbtn cancel" id="tfBtnCancel">Cancelar</button><button class="tf-mbtn confirm" id="tfBtnConfirm">Aceptar</button></div>`;
+    $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()},{once:true});
+    $('tfBtnCancel').onclick=_tfHide;
+    $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
+    $('tfModalInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('tfBtnConfirm').click()});
+    // Reabrir el turno con los trabajos que había
+    trnTurno=turnoSnap;
+    trnJobActual=null;
+    trnSavePending();
+    trnRender();
+    // Pedir nuevo trabajo
+    tfPrompt({
+      icon:'🔧',
+      title:'¿Qué trabajo añades?',
+      sub:turnoSnap.trabajos.length+' trabajos ya completados',
+      placeholder:'Describe el trabajo...',
+      confirmTxt:'▶ Empezar',
+      onConfirm:desc=>{
+        if(!desc||!desc.trim())return;
+        trnJobActual={desc:desc.trim(),inicio:Date.now()};
+        trnSavePending();
+        trnRender();
+      }
+    });
+  };
 }
 
 // Editar trabajo — modal completo con desc, inicio, fin y notas
