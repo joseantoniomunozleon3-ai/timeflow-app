@@ -1293,12 +1293,27 @@ function trnRenderHist(){
       return '<div class="trn-hist-job-row"><span class="trn-hist-job-desc">'+j.desc+'</span><span class="trn-hist-job-dur">'+trnD(jFin-j.inicio)+'</span><button class="trn-hist-job-edit" data-oi="'+oi+'" data-ji="'+ji+'">✏️</button></div>';
     }).join('');
     const tFin=t.fin||(t.trabajos.length?t.trabajos[t.trabajos.length-1].fin||t.inicio:t.inicio);
-    card.innerHTML='<div class="trn-hist-head"><div class="trn-hist-date">📅 '+trnFecha(t.inicio)+' <span class="trn-hist-chev">▾</span></div><div class="trn-hist-dur">'+trnD(tFin-t.inicio)+'</div></div><div class="trn-hist-meta" style="display:flex;justify-content:space-between;align-items:center">'+trnH(t.inicio)+' \u2192 '+trnH(tFin)+' \u00b7 '+t.trabajos.length+' trabajo'+(t.trabajos.length!==1?'s':'')+'<button class="trn-hist-reopen" data-oi="'+oi+'">🔓 Reabrir</button></div><div class="trn-hist-jobs">'+jobs+'</div>';
+    card.innerHTML='<div class="trn-hist-head"><div class="trn-hist-date">📅 '+trnFecha(t.inicio)+' <span class="trn-hist-chev">▾</span></div><div class="trn-hist-dur">'+trnD(tFin-t.inicio)+'</div></div><div class="trn-hist-meta" style="display:flex;justify-content:space-between;align-items:center">'+trnH(t.inicio)+' \u2192 '+trnH(tFin)+' \u00b7 '+t.trabajos.length+' trabajo'+(t.trabajos.length!==1?'s':'')+'<button class="trn-hist-reopen" data-oi="'+oi+'">🔓 Reabrir</button></div><div class="trn-hist-jobs">'+jobs+'<button class="trn-hist-wa" data-oi="'+oi+'" style="width:100%;margin-top:10px;background:#dcfce7;border:2px solid #86efac;color:#16a34a;font-family:var(--sans);font-size:.8rem;font-weight:700;padding:11px;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">📱 Compartir por WhatsApp</button></div>';
     card.querySelector('.trn-hist-head').addEventListener('click',()=>card.classList.toggle('open'));
     card.querySelectorAll('.trn-hist-job-edit').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();
       trnEditarJobHist(+btn.dataset.oi,+btn.dataset.ji);
     }));
+    card.querySelector('.trn-hist-wa').addEventListener('click',e=>{
+      e.stopPropagation();
+      const tData=trnLoadHist()[oi];
+      const tFinWa=tData.fin||(tData.trabajos.length?tData.trabajos[tData.trabajos.length-1].fin||tData.inicio:tData.inicio);
+      const durWa=tFinWa-tData.inicio;
+      const durTWa=tData.trabajos.reduce((a,j)=>a+((j.fin||tFinWa)-j.inicio),0);
+      let txt='🔧 *Resumen de turno*\n📅 '+trnFecha(tData.inicio)+'\n';
+      txt+='⏱ '+trnH(tData.inicio)+' → '+trnH(tFinWa)+' ('+trnD(durWa)+')\n';
+      txt+='✅ '+tData.trabajos.length+' trabajo'+(tData.trabajos.length!==1?'s':'')+' · Productivo: '+trnD(durTWa)+'\n\n';
+      tData.trabajos.forEach((j,i)=>{
+        const jFin=j.fin||tFinWa;
+        txt+=(i+1)+'. *'+j.desc+'* ('+trnD(jFin-j.inicio)+')\n   '+trnH(j.inicio)+' → '+trnH(jFin)+(j.notas?'\n   📝 '+j.notas:'')+'\n';
+      });
+      window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+    });
     card.querySelector('.trn-hist-reopen').addEventListener('click',e=>{
       e.stopPropagation();
       const idxOi=oi; // capturar en closure
