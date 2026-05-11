@@ -339,6 +339,8 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:opacity(.5)}
 .trn-hist-job-dur{font-weight:700;color:#1e3a5f;font-size:.75rem;white-space:nowrap}
 .trn-hist-job-edit{font-size:.65rem;font-weight:700;color:var(--mid);background:#f1f3f8;border:1.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0}
 .trn-hist-job-edit:active{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.trn-hist-reopen{display:block;width:100%;margin-top:10px;padding:10px;background:var(--indigog);border:1.5px dashed #1e3a5f;border-radius:10px;color:#1e3a5f;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;text-align:center}
+.trn-hist-reopen:active{background:#1e3a5f;color:#fff}
 .trn-res-stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
 .trn-res-s{background:var(--indigog);border-radius:10px;padding:10px;text-align:center}
 .trn-res-s-lbl{font-size:.6rem;font-weight:700;color:#1e3a5f;text-transform:uppercase;margin-bottom:3px}
@@ -1284,12 +1286,35 @@ function trnRenderHist(){
       return '<div class="trn-hist-job-row"><span class="trn-hist-job-desc">'+j.desc+'</span><span class="trn-hist-job-dur">'+trnD(jFin-j.inicio)+'</span><button class="trn-hist-job-edit" data-oi="'+oi+'" data-ji="'+ji+'">✏️</button></div>';
     }).join('');
     const tFin=t.fin||(t.trabajos.length?t.trabajos[t.trabajos.length-1].fin||t.inicio:t.inicio);
-    card.innerHTML='<div class="trn-hist-head"><div class="trn-hist-date">📅 '+trnFecha(t.inicio)+' <span class="trn-hist-chev">▾</span></div><div class="trn-hist-dur">'+trnD(tFin-t.inicio)+'</div></div><div class="trn-hist-meta">'+trnH(t.inicio)+' → '+trnH(tFin)+' · '+t.trabajos.length+' trabajo'+(t.trabajos.length!==1?'s':'')+'</div><div class="trn-hist-jobs">'+jobs+'</div>';
+    card.innerHTML='<div class="trn-hist-head"><div class="trn-hist-date">📅 '+trnFecha(t.inicio)+' <span class="trn-hist-chev">▾</span></div><div class="trn-hist-dur">'+trnD(tFin-t.inicio)+'</div></div><div class="trn-hist-meta">'+trnH(t.inicio)+' → '+trnH(tFin)+' · '+t.trabajos.length+' trabajo'+(t.trabajos.length!==1?'s':'')+'</div><div class="trn-hist-jobs">'+jobs+'<button class="trn-hist-reopen" data-oi="'+oi+'">🔓 Reabrir turno</button></div>';
     card.querySelector('.trn-hist-head').addEventListener('click',()=>card.classList.toggle('open'));
     card.querySelectorAll('.trn-hist-job-edit').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();
       trnEditarJobHist(+btn.dataset.oi,+btn.dataset.ji);
     }));
+    card.querySelector('.trn-hist-reopen').addEventListener('click',e=>{
+      e.stopPropagation();
+      const h=trnLoadHist();
+      const t2=h[+e.currentTarget.dataset.oi];
+      tfConfirm({
+        icon:'🔓',
+        title:'¿Reabrir este turno?',
+        sub:'📅 '+trnFecha(t2.inicio)+'\n'+t2.trabajos.length+' trabajo'+(t2.trabajos.length!==1?'s':'')+' ya registrados.\nSe añadirá como turno activo.',
+        confirmTxt:'Reabrir',
+        confirmCls:'confirm',
+        onConfirm:()=>{
+          // Eliminar del historial
+          h.splice(+e.currentTarget.dataset.oi,1);
+          trnSaveHist(h);
+          // Restaurar como turno pendiente (sin fin)
+          const {fin:_,...turnoSinFin}=t2;
+          trnTurno={...turnoSinFin};
+          trnJobActual=null;
+          trnSavePending();
+          trnRender();
+        }
+      });
+    });
     el.appendChild(card);
   });
 }
