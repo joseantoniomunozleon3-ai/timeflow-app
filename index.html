@@ -1047,7 +1047,14 @@ applyMoneyState();
 // ── MODAL SYSTEM ──
 let _tfCb=null;
 function _tfShow(){const o=$('tfOverlay');o.classList.add('show');setTimeout(()=>{const i=$('tfModalInput');if(i.style.display!=='none')i.focus()},320)}
-function _tfHide(){$('tfOverlay').classList.remove('show');_tfCb=null}
+function _tfHide(){
+  $('tfOverlay').classList.remove('show');
+  _tfCb=null;
+  // Siempre restaurar el botón cancel al estado por defecto
+  const c=$('tfBtnCancel');
+  c.textContent='Cancelar';
+  c.onclick=_tfHide;
+}
 $('tfOverlay').addEventListener('click',e=>{if(e.target===$('tfOverlay'))_tfHide()});
 $('tfBtnCancel').onclick=_tfHide;
 $('tfBtnConfirm').onclick=()=>{if(_tfCb){const v=$('tfModalInput').style.display!=='none'?$('tfModalInput').value.trim():null;_tfCb(v)}_tfHide()};
@@ -1405,41 +1412,8 @@ function trnMostrarResumen(finTs){
   });
   const turnoSnap={inicio:trnTurno.inicio,trabajos:JSON.parse(JSON.stringify(trnTurno.trabajos))};
 
-  // Paso 1: preguntar si añadir trabajo o cerrar
-  _tfSetup({icon:'📋',title:'Revisar turno',sub:resumen,confirmTxt:'✅ Cerrar turno',confirmCls:'confirm',showInput:false});
-  // Reusar el botón cancel como "Añadir trabajo"
-  $('tfBtnCancel').textContent='➕ Añadir trabajo';
-  $('tfModalBtns').className='tf-modal-btns';
-  $('tfBtnCancel').style.display='';
-  $('tfBtnCancel').onclick=()=>{
-    // Restaurar cancel a su estado normal antes de cerrar
-    $('tfBtnCancel').textContent='Cancelar';
-    $('tfBtnCancel').onclick=_tfHide;
-    _tfHide();
-    // Reabrir turno y pedir nuevo trabajo
-    trnTurno=turnoSnap;
-    trnJobActual=null;
-    trnSavePending();
-    trnRender();
-    tfPrompt({
-      icon:'🔧',
-      title:'¿Qué trabajo añades?',
-      sub:turnoSnap.trabajos.length+' trabajos ya completados',
-      placeholder:'Describe el trabajo...',
-      confirmTxt:'▶ Empezar',
-      onConfirm:desc=>{
-        if(!desc||!desc.trim())return;
-        trnJobActual={desc:desc.trim(),inicio:Date.now()};
-        trnSavePending();
-        trnRender();
-      }
-    });
-  };
-  _tfCb=()=>{
-    // Restaurar cancel
-    $('tfBtnCancel').textContent='Cancelar';
-    $('tfBtnCancel').onclick=_tfHide;
-    // Guardar en historial
+  // Guardar en historial y limpiar estado
+  function guardarYCerrar(){
     window._trnDatos={turno:turnoSnap,fin,resumen};
     const hist=trnLoadHist();
     hist.push({...turnoSnap,fin});
@@ -1459,8 +1433,41 @@ function trnMostrarResumen(finTs){
         window.open('https://wa.me/?text='+encodeURIComponent('🔧 *Resumen de turno*\n📅 '+trnFecha(window._trnDatos.fin)+'\n'+window._trnDatos.resumen),'_blank');
       }
     });
-  };
-  _tfShow();
+  }
+
+  // Preguntar: ¿añadir trabajo o cerrar?
+  tfConfirm({
+    icon:'📋',
+    title:'¿Cerrar turno?',
+    sub:resumen,
+    confirmTxt:'✅ Cerrar turno',
+    confirmCls:'confirm',
+    onConfirm:guardarYCerrar
+  });
+  // Sobreescribir cancel DESPUÉS de tfConfirm para que no lo pise
+  setTimeout(()=>{
+    $('tfBtnCancel').textContent='➕ Añadir trabajo';
+    $('tfBtnCancel').onclick=()=>{
+      _tfHide();
+      trnTurno=turnoSnap;
+      trnJobActual=null;
+      trnSavePending();
+      trnRender();
+      tfPrompt({
+        icon:'🔧',
+        title:'¿Qué trabajo añades?',
+        sub:turnoSnap.trabajos.length+' trabajos ya completados',
+        placeholder:'Describe el trabajo...',
+        confirmTxt:'▶ Empezar',
+        onConfirm:desc=>{
+          if(!desc||!desc.trim())return;
+          trnJobActual={desc:desc.trim(),inicio:Date.now()};
+          trnSavePending();
+          trnRender();
+        }
+      });
+    };
+  },0);
 }
 
 // Editar trabajo — modal completo con desc, inicio, fin y notas
